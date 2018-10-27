@@ -5,5 +5,11 @@
   "main": "index.js",
   "author": "vixrant",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "ws": "^6.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.8.0"
+  }
 }
