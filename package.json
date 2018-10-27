@@ -1,0 +1,9 @@
+{
+  "name": "shakal-io",
+  "version": "1.0.0",
+  "description": "WebRTC based video calling website.",
+  "main": "index.js",
+  "author": "vixrant",
+  "license": "MIT",
+  "private": true
+}
