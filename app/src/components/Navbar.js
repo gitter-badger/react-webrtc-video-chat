@@ -16,7 +16,8 @@ class Navbar extends Component {
     <Menu
         color='primary'>
         <Menu.Item
-            name='Hello'
+            icon='user circle'
+            name='Shakal'
             onClick={this.handleMenuClick}
             active={this.state.activeItem}
         />
