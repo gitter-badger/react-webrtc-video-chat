@@ -49,4 +49,8 @@ export default {
         }
     }),
 
+    TOGGLE_LIST: _ => ({
+        type: 'TOGGLE_LIST',
+    }),
+
 };

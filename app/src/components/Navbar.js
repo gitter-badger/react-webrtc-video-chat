@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Menu } from 'semantic-ui-react';
 
+import { connect } from 'react-redux';
+import sessionActions from '../actions/sessionActions';
+
 class Navbar extends Component {
     state = {
         activeItem: false
@@ -21,8 +24,18 @@ class Navbar extends Component {
             onClick={this.handleMenuClick}
             active={this.state.activeItem}
         />
+
+        <Menu.Item
+            icon='users'
+            name='Online Users'
+            onClick={this.props.toggleList}
+        />
     </Menu>)
 }
+
+const mapDispatchToProps = dispatch => ({
+    toggleList: _ => dispatch(sessionActions.TOGGLE_LIST())
+});
     
-export default Navbar;
+export default connect(null, mapDispatchToProps)(Navbar);
     

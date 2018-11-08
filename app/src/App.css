@@ -2,3 +2,7 @@ video {
     width: 98%;
     max-height: 100%;
 }
+
+.AppContent {
+    padding: 1rem;
+}

@@ -3,6 +3,7 @@ const initialState = {
     to: undefined,
     wsConnection: undefined,
     onlineUsersList: [],
+    openList: true,
 
     localVideoStream: undefined,
     remoteVideoStream: undefined,
@@ -21,7 +22,13 @@ function sessionReducer (state=initialState, action) {
         case 'SET_REMOTE_STREAM':
             return {
                 ...state,
-                ...action.payload
+                ...action.payload,
+            }
+
+        case 'TOGGLE_LIST':
+            return {
+                ...state,
+                openList: !state.openList,
             }
 
         default:
