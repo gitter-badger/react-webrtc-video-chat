@@ -1,19 +1,28 @@
 var localVideo;
-var localStream;
 var remoteVideo;
+
+var localStream;
 var peerConnection;
-var uuid;
+
+var listOfClients = [];
+
+var name;
+
 var serverConnection;
 
 var peerConnectionConfig = {
-  'iceServers': [
-    {'urls': 'stun:stun.stunprotocol.org:3478'},
-    {'urls': 'stun:stun.l.google.com:19302'},
+  iceServers: [
+    {urls: 'stun:stun.stunprotocol.org:3478'},
+    {urls: 'stun:stun.l.google.com:19302'},
+    {urls: 'stun:stun1.l.google.com:19302'},
+    {urls: 'stun:stun2.l.google.com:19302'},
+    {urls: 'stun:stun3.l.google.com:19302'},
+    {urls: 'stun:stun4.l.google.com:19302'},
   ]
 };
 
 function pageReady() {
-  uuid = createUUID();
+  // uuid = createUUID();
 
   localVideo = document.getElementById('localVideo');
   remoteVideo = document.getElementById('remoteVideo');
@@ -39,6 +48,8 @@ function getUserMediaSuccess(stream) {
 }
 
 function start(isCaller) {
+
+
   peerConnection = new RTCPeerConnection(peerConnectionConfig);
   peerConnection.onicecandidate = gotIceCandidate;
   peerConnection.ontrack = gotRemoteStream;
@@ -54,8 +65,8 @@ function gotMessageFromServer(message) {
 
   var signal = JSON.parse(message.data);
 
-  // Ignore messages from ourself
-  if(signal.uuid == uuid) return;
+  // // Ignore messages from ourself
+  // if(signal.uuid == uuid) return;
 
   if(signal.sdp) {
     peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp)).then(function() {
@@ -71,7 +82,7 @@ function gotMessageFromServer(message) {
 
 function gotIceCandidate(event) {
   if(event.candidate != null) {
-    serverConnection.send(JSON.stringify({'ice': event.candidate, 'uuid': uuid}));
+    serverConnection.send(JSON.stringify({type: 'signal', ice: event.candidate, to: 'vikrant gajria'}));
   }
 }
 
@@ -79,7 +90,7 @@ function createdDescription(description) {
   console.log('got description');
 
   peerConnection.setLocalDescription(description).then(function() {
-    serverConnection.send(JSON.stringify({'sdp': peerConnection.localDescription, 'uuid': uuid}));
+    serverConnection.send(JSON.stringify({sdp: peerConnection.localDescription, to: 'vikrant gajria'}));
   }).catch(errorHandler);
 }
 
@@ -89,13 +100,5 @@ function gotRemoteStream(event) {
 }
 
 function errorHandler(error) {
-  console.log(error);
-}
-
-// Taken from http://stackoverflow.com/a/105074/515584
-// Strictly speaking, it's not a real UUID, but it gets the job done here
-function createUUID() {
-  let s4 = _ => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+  console.error(error);
 }

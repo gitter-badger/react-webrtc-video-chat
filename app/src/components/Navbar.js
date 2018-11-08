@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Menu } from 'semantic-ui-react';
+import { Menu, Sticky } from 'semantic-ui-react';
 
 import { connect } from 'react-redux';
 import sessionActions from '../actions/sessionActions';
@@ -16,21 +16,23 @@ class Navbar extends Component {
     }
 
     render = () => (
-    <Menu
-        color='blue'>
-        <Menu.Item
-            icon='user circle'
-            name='Shakal'
-            onClick={this.handleMenuClick}
-            active={this.state.activeItem}
-        />
+        <Sticky>
+            <Menu>
+                <Menu.Item
+                    icon='user circle'
+                    name='Shakal'
+                    onClick={this.handleMenuClick}
+                    active={this.state.activeItem}
+                />
 
-        <Menu.Item
-            icon='users'
-            name='Online Users'
-            onClick={this.props.toggleList}
-        />
-    </Menu>)
+                <Menu.Item
+                    icon='users'
+                    name='Online Users'
+                    onClick={this.props.toggleList}
+                />
+            </Menu>
+        </Sticky>
+    )
 }
 
 const mapDispatchToProps = dispatch => ({

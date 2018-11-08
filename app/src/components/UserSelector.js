@@ -11,7 +11,7 @@ function UserSelector (props) {
     let items = [<List.Item uuid='1'> Ola </List.Item>, <List.Item uuid='2'> Amigo </List.Item>];
 
     return (
-        <Card fluid raised>
+        <Card fluid raised className='animated bounce'>
             <Card.Content>
                 <Card.Header>Select User to Call</Card.Header>
             </Card.Content>

@@ -21,7 +21,7 @@ class StartupModal extends Component {
     }
 
     render = () => (
-        <Modal open={!this.props.name}>
+        <Modal open={!this.props.name} className='animated bounce'>
             <Modal.Header>Log in!</Modal.Header>
             <Modal.Content>
                 <Form>
