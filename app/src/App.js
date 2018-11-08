@@ -5,17 +5,12 @@ import 'semantic-ui-css/semantic.min.css';
 import { connect } from 'react-redux';
 import sessionActions from './actions/sessionActions';
 
-import { Grid, Header, Icon, Placeholder } from 'semantic-ui-react';
+import { Grid, Header, Icon } from 'semantic-ui-react';
 import { If } from 'react-extras';
 import Navbar from './components/Navbar';
 import StartupModal from './components/StartupModal';
 import UserSelector from './components/UserSelector';
-
-const PlaceholderVideo = _ => (
-  <Placeholder style={{ 'minHeight': '360px', width: '100%' }}>
-    <Placeholder.Image />
-  </Placeholder>
-);
+import PlaceholderVideo from './components/PlaceholderVideo';
 
 class App extends Component {
   state = {
@@ -66,11 +61,11 @@ class App extends Component {
   }
 
   // * subcomponents
-  videoRow = ({ header, stream, passToRef, id }) => (
+  videoRow = ({ icon, header, stream, passToRef, id }) => (
     <Grid.Row>
       <Grid.Column width={2}>
         <Header as="h2" icon textAlign="center">
-          <Icon name="wifi" circular />
+          <Icon name={icon} circular />
           <Header.Content>{header}</Header.Content>
         </Header>
       </Grid.Column>
@@ -96,8 +91,8 @@ class App extends Component {
           {this.props.openList ? <UserSelector /> : null}
 
           <Grid columns="2" divided stackable>
-            <this.videoRow header='Them' passToRef={this.state.remoteVideoRef} stream={this.props.remoteStream} id='remoteVideo' />
-            <this.videoRow header='You' passToRef={this.state.localVideoRef} stream={this.props.localStream} id='localVideo' />
+            <this.videoRow icon='wifi' header='Them' passToRef={this.state.remoteVideoRef} stream={this.props.remoteStream} id='remoteVideo' />
+            <this.videoRow icon='user' header='You' passToRef={this.state.localVideoRef} stream={this.props.localStream} id='localVideo' />
           </Grid>
         </div>
       </div>

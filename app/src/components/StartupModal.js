@@ -7,6 +7,12 @@ import { connect } from 'react-redux';
 class StartupModal extends Component {
     state = {
         name: '',
+        nameInputRef: React.createRef (),
+    }
+
+    componentDidMount = _ => {
+        // focus the textbox
+        this.state.nameInputRef.current.focus ();
     }
 
     handleNameInputChange = e => {
@@ -27,7 +33,7 @@ class StartupModal extends Component {
                 <Form>
                     <Form.Field>
                         <label>Name</label>
-                        <Input onChange={this.handleNameInputChange} />
+                        <Input ref={this.state.nameInputRef} onChange={this.handleNameInputChange} />
                     </Form.Field>
                     <Button type='submit' onClick={this.handleSubmitButton} color={this.state.name ? 'blue' : 'grey'}>Enter room!</Button>
                 </Form>

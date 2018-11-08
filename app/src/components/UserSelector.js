@@ -8,7 +8,7 @@ function UserSelector (props) {
         alert('' + data.uuid);
     }
 
-    let items = [<List.Item uuid='1'> Ola </List.Item>, <List.Item uuid='2'> Amigo </List.Item>];
+    let items = [<List.Item key={0} uuid='1'> Ola </List.Item>, <List.Item key={1} uuid='2'> Amigo </List.Item>];
 
     return (
         <Card fluid raised className='animated bounce'>
