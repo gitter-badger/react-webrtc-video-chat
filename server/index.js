@@ -1,9 +1,25 @@
 const WebSocket = require('ws').Server;
 const uuid = require('uuid/v1');
 
+const MESSAGES = require('./messages');
+
 const ws = new WebSocket({
     port: 8000,
 });
+
+ws.broadcast = function broadcast(data) {
+    ws.clients.forEach(client => {
+        client.send(data);
+    });
+};
+
+ws.getSafeClientsList = function getClientsList() {
+    let clist = Array.from (ws.clients);
+    return clist.map(e => ({
+        name: e.name,
+        id: e.id,
+    }));
+};
 
 ws.on('connection', socket => {
     socket.id = uuid();
@@ -11,33 +27,30 @@ ws.on('connection', socket => {
 
     socket.on('message', data => {
         // parse string
-        data = JSON.parse (data);
+        data = JSON.parse(data);
 
         switch (data.type) {
             case 'name':
                 socket.name = data.name;
+                ws.broadcast(MESSAGES.clientList(ws.getSafeClientsList ()));
             break;
 
             case 'list':
-                let clients = Array.from (ws.clients).map(e => ({
-                    name: e.name,
-                    id: e.id,
-                }));
-                socket.send(JSON.stringify(clients));
+                socket.send(MESSAGES.clientList(ws.getSafeClientsList ()));
+                console.log ('Sending : ', JSON.stringify (ws.getSafeClientsList ()));
             break;
 
             case 'signal':
                 let receiver = Array.from (ws.clients).find(e => e.id == data.to);
                 if (receiver) {
-                    console.log(data.signal, ' to ', rreceiver.id);
-                    receiver.send(data.signal);
+                    receiver.send(MESSAGES.signal(data.signal));
                 } else {
-                    sendErrorMessage(socket, 404, 'No receiver with such ID found.');
+                    socket.send(MESSAGES.error(404, 'No receiver with such ID found.'));
                 }
             break;
 
             default:
-                sendErrorMessage(socket, 400, 'Bad Type.');
+                socket.send(MESSAGES.error(400, 'Bad Type.'));
         }
     });
 
@@ -48,12 +61,3 @@ ws.on('error', e => {
     console.error(e);
     process.exit(-1);
 });
-
-// ---
-
-function sendErrorMessage(socket, status, error) {
-    socket.send(JSON.stringify({
-        status,
-        error,
-    }));
-};

@@ -9,7 +9,29 @@
 
         <script src="signal.js"></script>
         <script>
-            pageReady();
+            var x = new WebSocket('ws://localhost:8000');
+            x.onmessage = message => {
+                console.log(message.data);
+            };
+
+            function name (n) {
+                x.send (JSON.stringify ({
+                    type: 'name',
+                    name: n,
+                }));
+            }
+
+            function list () {
+                x.send (JSON.stringify ({
+                    type: 'list',
+                }));
+            }
+
+            function signal () {
+                x.send (JSON.stringify ({
+                    type: 'signal',
+                }));
+            }
         </script>
     </body>
 </html>
