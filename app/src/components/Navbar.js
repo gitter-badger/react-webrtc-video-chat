@@ -14,7 +14,7 @@ class Navbar extends Component {
 
     render = () => (
     <Menu
-        color='primary'>
+        color='blue'>
         <Menu.Item
             icon='user circle'
             name='Shakal'
