@@ -26,6 +26,8 @@ ws.on('connection', socket => {
     console.log('Connected: ', socket.id);
 
     socket.on('message', data => {
+        console.log ('UUID: ', socket.id, ' ~ DATA: ', data);
+
         // parse string
         data = JSON.parse(data);
 

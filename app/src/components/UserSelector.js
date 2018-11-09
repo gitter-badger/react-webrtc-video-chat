@@ -2,13 +2,15 @@ import React from 'react';
 import { Card, List } from 'semantic-ui-react';
 
 import { connect } from 'react-redux';
+import sessionActions from '../actions/sessionActions';
 
 function UserSelector (props) {
     let handleItemClick = (e, data) => {
-        alert('' + data.uuid);
+        props.setTo(data.uuid);
     }
 
-    let items = [<List.Item key={0} uuid='1'> Ola </List.Item>, <List.Item key={1} uuid='2'> Amigo </List.Item>];
+    let i = 0;
+    let items = props.onlineUsersList.map(e => (<List.Item key={i++} uuid={e.id} disabled={props.to === e.id}> {e.name ? e.name : e.id} </List.Item>));
 
     return (
         <Card fluid raised className='animated bounce'>
@@ -24,6 +26,11 @@ function UserSelector (props) {
 
 const mapStateToProps = store => ({
     onlineUsersList: store.onlineUsersList,
+    to: store.to,
 });
 
-export default connect (mapStateToProps)(UserSelector);
+const mapDispatchToProps = dispatch => ({
+    setTo: uuid => dispatch(sessionActions.SET_TO(uuid)),
+});
+
+export default connect (mapStateToProps, mapDispatchToProps)(UserSelector);

@@ -8,6 +8,7 @@
   "private": true,
   "dependencies": {
     "express": "^4.16.4",
+    "lodash": "^4.17.11",
     "uuid": "^3.3.2",
     "ws": "^6.1.0"
   },

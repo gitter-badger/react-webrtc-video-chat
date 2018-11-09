@@ -45,6 +45,10 @@ class App extends Component {
 
     const peer = this.props.peerConnection;
 
+    socket.on('list', ({ list }) => {
+      this.props.dispatch(sessionActions.SET_LIST(list));
+    });
+
     socket.on('signal', ({ signal }) => {
       if (signal.ice) {
         peer.addIceCandidate(new RTCIceCandidate(signal.ice))
