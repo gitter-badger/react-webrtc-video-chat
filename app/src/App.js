@@ -23,6 +23,12 @@ class App extends Component {
     remoteVideoRef: React.createRef(),
   }
 
+  // * event handlers
+  errorHandler = e => {
+    alert(e);
+    console.error(e);
+  }
+
   // * helpers
   setStreams = _ => {
     let localVideo = this.state.localVideoRef.current;
@@ -36,6 +42,38 @@ class App extends Component {
 
   startServerConnection = _ => {
     const socket = new SignalConnection('ws://localhost:8000/');
+
+    const peer = this.props.peerConnection;
+
+    socket.on('signal', ({ signal }) => {
+      if (signal.ice) {
+        peer.addIceCandidate(new RTCIceCandidate(signal.ice))
+          .catch(this.errorHandler);
+      }
+      else if (signal.sdp) {
+        // Description!
+        peer.setRemoteDescription(new RTCSessionDescription(signal.sdp))
+        .then(_ => {
+          if(signal.sdp.type === 'offer') { // Only create answers in response to offers
+            peer.createAnswer()
+            .then(description => {
+              peer.setLocalDescription(description)
+                .then(_ => {
+                  socket.send({
+                    type: 'signal',
+                    signal: peer.localDescription,
+                    to: this.props.to,
+                  })
+                  .catch(this.errorHandler);
+                })
+            })
+            .catch(this.errorHandler);
+          }
+        })
+        .catch(this.errorHandler);
+      }
+    });
+
     this.props.dispatch(sessionActions.SET_WS(socket));
   }
 
@@ -67,10 +105,7 @@ class App extends Component {
             dispatch(sessionActions.SET_LOCAL_STREAM(stream));
           });
         })
-        .catch((e) => {
-          console.error(e);
-          alert(e);
-        });
+        .catch(this.errorHandler);
     } else {
       alert ('Switch to Chrome or Firefox!');
       return Error();
