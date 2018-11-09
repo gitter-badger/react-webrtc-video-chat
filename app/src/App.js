@@ -12,30 +12,60 @@ import StartupModal from './components/StartupModal';
 import UserSelector from './components/UserSelector';
 import PlaceholderVideo from './components/PlaceholderVideo';
 
+import { videoConstrains, peerConnectionConfig } from './util/config';
+import { SignalConnection } from './util';
+
+// -----
+
 class App extends Component {
   state = {
     localVideoRef: React.createRef(),
     remoteVideoRef: React.createRef(),
   }
 
-  constructor (props) {
-    super (props);
+  // * helpers
+  setStreams = _ => {
+    let localVideo = this.state.localVideoRef.current;
+    if (localVideo.srcObject !== this.props.localStream)
+      localVideo.srcObject = this.props.localStream;
 
+    let remoteVideo = this.state.remoteVideoRef.current;
+    if (remoteVideo.srcObject !== this.props.remoteStream)
+      remoteVideo.srcObject = this.props.remoteStream;
+  }
+
+  startServerConnection = _ => {
+    const socket = new SignalConnection('ws://localhost:8000/');
+    this.props.dispatch(sessionActions.SET_WS(socket));
+  }
+
+  startPeer = _ => {
+    const peer = new RTCPeerConnection(peerConnectionConfig);
+    
+    peer.onicecandidate = ice => {
+      if(ice.candidate) {
+        this.props.serverConnection.send(JSON.stringify({type: 'signal', ice: ice.candidate, to: this.props.to}));
+      }
+    };
+
+    peer.ontrack = track => {
+      this.props.dispatch(sessionActions.SET_REMOTE_STREAM(track));
+    };
+
+    this.props.dispatch(sessionActions.SET_PEER(peer));
+  }
+
+  startLocalVideo = _ => {
     if (navigator.mediaDevices.getUserMedia) {
-      // Local video constraints.
-      const constraints = {
-        video: {
-          mandatory: {
-            minWidth: 640,
-            minHeight: 360,
-          },
-        },
-        audio: true,
-      };
       // Get the stream.
-      navigator.mediaDevices.getUserMedia(constraints)
+      navigator.mediaDevices.getUserMedia(videoConstrains)
         .then((stream) => {
-          this.props.dispatch (sessionActions.SET_LOCAL_STREAM(stream));
+          this.props.dispatch (dispatch => {
+            let tracks = stream.getTracks();
+            for (let t of tracks)
+              this.props.peerConnection.addTrack(t);
+            dispatch(sessionActions.SET_LOCAL_STREAM(stream));
+          });
         })
         .catch((e) => {
           console.error(e);
@@ -43,22 +73,24 @@ class App extends Component {
         });
     } else {
       alert ('Switch to Chrome or Firefox!');
+      return Error();
     }
   }
 
+  // * hooks
+  // TODO: Fix hooks.
+
   componentDidMount = _ => {
+    this.startServerConnection();
+    this.startPeer();
+
+    this.startLocalVideo();
     this.setStreams();
   }
 
   componentDidUpdate = _ => {
     this.setStreams();
-  }
-
-  // * helper functions
-  setStreams = _ => {
-    let localVideo = this.state.localVideoRef.current;
-    localVideo.srcObject = this.props.localStream;
-  }
+  };
 
   // * subcomponents
   videoRow = ({ icon, header, stream, passToRef, id }) => (
@@ -100,10 +132,15 @@ class App extends Component {
   }
 }
 
+// -----
+
 const mapStateToProps = store => ({
   localStream: store.localVideoStream,
   remoteStream: store.remoteVideoStream,
   openList: store.openList,
+  serverConnection: store.wsConnection,
+  to: store.to,
+  peerConnection: store.peerConnection,
 });
 
 export default connect (mapStateToProps)(App);

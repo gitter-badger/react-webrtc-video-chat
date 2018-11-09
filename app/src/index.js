@@ -3,18 +3,22 @@ import ReactDOM from 'react-dom';
 import App from './App';
 
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, compose, applyMiddleware } from 'redux';
 import sessionReducer from './reducers/sessionReducer';
+import thunk from 'redux-thunk';
 
 import './index.css';
 import * as serviceWorker from './serviceWorker';
+
+const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 // Create store.
 let sessionStore;
 // TODO: Add environment check.
 sessionStore = createStore(
-    sessionReducer, 
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+    sessionReducer,
+    composeEnhancer(applyMiddleware(thunk)),
+    );
 
 ReactDOM.render(
     <Provider store={sessionStore}>

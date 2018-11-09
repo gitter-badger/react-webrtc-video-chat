@@ -44,12 +44,24 @@ class StartupModal extends Component {
 
 const mapStateToProps = store => ({
     name: store.name,
+    serverConnection: store.wsConnection,
 });
 
-const mapDispatchToProps = dispatch => ({
-    setName: name => {
-        dispatch(sessionActions.SET_NAME(name));
-    },
-});
+const mergeProps = (stateProps, dispatchProps) => {
+    const { serverConnection } = stateProps;
+    const { dispatch } = dispatchProps;
 
-export default connect(mapStateToProps, mapDispatchToProps)(StartupModal);
+    return {
+        ...stateProps,
+
+        setName: name => {
+            serverConnection.send({
+                type: 'name',
+                name,
+            });
+            dispatch(sessionActions.SET_NAME(name));
+        },
+    };
+};
+
+export default connect(mapStateToProps, null, mergeProps)(StartupModal);
