@@ -9,7 +9,7 @@ export class SignalConnection extends EventEmitter {
         this.ws.onmessage = message => {
             let messageJson = JSON.parse(message.data);
 
-            console.log ('Receiver: ', message.data);
+            console.log ('Received: ', message.data);
 
             if (messageJson.type) {
                 this.emit(messageJson.type, _.omit(messageJson, 'type'));

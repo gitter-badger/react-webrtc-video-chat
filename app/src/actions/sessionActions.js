@@ -14,6 +14,13 @@ export default {
         },
     }),
 
+    SET_FROM: from => ({
+        type: 'SET_FROM',
+        payload: {
+            from
+        }
+    }),
+
     SET_LOCAL_STREAM: localVideoStream => ({
         type: 'SET_LOCAL_STREAM',
         payload: {

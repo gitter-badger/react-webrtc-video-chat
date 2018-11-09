@@ -15,6 +15,7 @@ function sessionReducer (state=initialState, action) {
 
         case 'SET_WS':
         case 'SET_TO':
+        case 'SET_FROM':
         case 'SET_LIST':
         case 'SET_NAME':
         case 'SET_PEER':
