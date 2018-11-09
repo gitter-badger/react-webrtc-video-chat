@@ -30,6 +30,16 @@ class App extends Component {
   }
 
   // * helpers
+
+  createdDescription = description => {
+    const peer = this.props.peerConnection;
+    const socket = this.props.serverConnection;
+
+    peer.setLocalDescription(description).then(function() {
+      socket.send({sdp: peerConnection.localDescription, to: this.props.to});
+    }).catch(errorHandler);
+  }
+
   setStreams = _ => {
     let localVideo = this.state.localVideoRef.current;
     if (localVideo.srcObject !== this.props.localStream)
@@ -43,33 +53,24 @@ class App extends Component {
   startServerConnection = _ => {
     const socket = new SignalConnection('ws://localhost:8000/');
 
-    const peer = this.props.peerConnection;
-
     socket.on('list', ({ list }) => {
       this.props.dispatch(sessionActions.SET_LIST(list));
     });
 
     socket.on('signal', ({ signal }) => {
+      const peer = this.props.peerConnection;
+
       if (signal.ice) {
         peer.addIceCandidate(new RTCIceCandidate(signal.ice))
           .catch(this.errorHandler);
       }
       else if (signal.sdp) {
-        // Description!
-        peer.setRemoteDescription(new RTCSessionDescription(signal.sdp))
+        peer.setRemoteDescription(new RTCSessionDescription(signal))
         .then(_ => {
-          if(signal.sdp.type === 'offer') { // Only create answers in response to offers
+          if(signal.type === 'offer') { // Only create answers in response to offers
             peer.createAnswer()
             .then(description => {
-              peer.setLocalDescription(description)
-                .then(_ => {
-                  socket.send({
-                    type: 'signal',
-                    signal: peer.localDescription,
-                    to: this.props.to,
-                  })
-                  .catch(this.errorHandler);
-                })
+              
             })
             .catch(this.errorHandler);
           }
@@ -129,6 +130,23 @@ class App extends Component {
 
   componentDidUpdate = _ => {
     this.setStreams();
+
+    if (this.props.to) {
+      const peer = this.props.peerConnection;
+      peer.createOffer()
+      .then(description => {
+        peer.setLocalDescription(description)
+          .then(_ => {
+            this.props.serverConnection.send({
+              type: 'signal',
+              signal: peer.localDescription,
+              to: this.props.to,
+            })
+            .catch(this.errorHandler);
+          })
+      })
+      .catch(this.errorHandler);
+    }
   };
 
   // * subcomponents

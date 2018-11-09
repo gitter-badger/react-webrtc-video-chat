@@ -10,9 +10,10 @@ module.exports = {
         error,
     }),
 
-    signal: signal => JSON.stringify({
+    signal: (signal, from) => JSON.stringify({
         type: 'signal',
         signal,
+        from,
     }),
 
 };

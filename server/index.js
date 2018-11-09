@@ -45,7 +45,7 @@ ws.on('connection', socket => {
             case 'signal':
                 let receiver = Array.from (ws.clients).find(e => e.id == data.to);
                 if (receiver) {
-                    receiver.send(MESSAGES.signal(data.signal));
+                    receiver.send(MESSAGES.signal(data.signal, socket.id));
                 } else {
                     socket.send(MESSAGES.error(404, 'No receiver with such ID found.'));
                 }
