@@ -7,7 +7,12 @@ import sessionActions from '../actions/sessionActions';
 
 function UserSelector (props) {
     let handleItemClick = (e, data) => {
-        props.setTo(data.uuid);
+        const to = data.uuid;
+        props.serverConnection.send({
+            type: 'call',
+            to,
+        });
+        props.dispatch(sessionActions.SET_TO(to));
     }
 
     let i = 0;
@@ -27,11 +32,8 @@ function UserSelector (props) {
 
 const mapStateToProps = store => ({
     onlineUsersList: store.onlineUsersList,
+    serverConnection: store.wsConnection,
     to: store.to,
 });
 
-const mapDispatchToProps = dispatch => ({
-    setTo: uuid => dispatch(sessionActions.SET_TO(uuid)),
-});
-
-export default connect (mapStateToProps, mapDispatchToProps)(UserSelector);
+export default connect (mapStateToProps) (UserSelector);

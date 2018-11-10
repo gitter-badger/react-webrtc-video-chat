@@ -18,7 +18,7 @@ export default {
         type: 'SET_FROM',
         payload: {
             from
-        }
+        },
     }),
 
     SET_LOCAL_STREAM: localVideoStream => ({
@@ -49,11 +49,11 @@ export default {
         },
     }),
 
-    SET_PEER: peerConnection => ({
+    SET_VIDEOCALL: videoCall => ({
         type: 'SET_PEER',
         payload: {
-            peerConnection
-        }
+            videoCall
+        },
     }),
 
     TOGGLE_LIST: _ => ({

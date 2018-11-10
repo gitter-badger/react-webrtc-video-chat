@@ -14,6 +14,7 @@ import PlaceholderVideo from './components/PlaceholderVideo';
 
 import { videoConstrains, peerConnectionConfig } from './util/config';
 import { SignalConnection } from './util';
+import VideoCall from './util/VideoCall';
 
 // -----
 
@@ -30,19 +31,6 @@ class App extends Component {
   }
 
   // * helpers
-
-  createdDescription = (description, to) => {
-    const peer = this.props.peerConnection;
-    const socket = this.props.serverConnection;
-
-    peer.setLocalDescription(description).then(function() {
-      socket.send({
-        type: 'signal',
-        sdp: peer.localDescription,
-        to,
-      });
-    }).catch(this.errorHandler);
-  }
 
   setStreams = _ => {
     let localVideo = this.state.localVideoRef.current;
@@ -61,51 +49,25 @@ class App extends Component {
       this.props.dispatch(sessionActions.SET_LIST(list));
     });
 
-    socket.on('signal', ({ ice, sdp, from }) => {
-      const peer = this.props.peerConnection;
+    socket.on('calling', ({ from }) => {
+      this.props.dispatch(sessionActions.SET_FROM(from));
+    });
 
-      if (ice) {
-        peer.addIceCandidate(new RTCIceCandidate(ice))
-          .catch(this.errorHandler);
-      }
-      else if (sdp) {
-        peer.setRemoteDescription(new RTCSessionDescription(sdp))
-        .then(_ => {
-          if(sdp.type === 'offer') { // Only create answers in response to offers
-            peer.createAnswer()
-            .then(description => {
-              this.props.dispatch(sessionActions.SET_FROM(from));
-              this.createdDescription(description, from);
-            })
-            .catch(this.errorHandler);
-          }
-        })
-        .catch(this.errorHandler);
-      }
+    socket.on('signal', data => {
+      this.props.videoCall.signal(data);
     });
 
     this.props.dispatch(sessionActions.SET_WS(socket));
   }
 
   startPeer = _ => {
-    const peer = new RTCPeerConnection(peerConnectionConfig);
-    
-    peer.onicecandidate = ice => {
-      if(ice.candidate) {
-        this.props.serverConnection.send({type: 'signal', ice: ice.candidate, to: this.props.to});
-      }
-    };
-
-    peer.ontrack = track => {
-      alert('GOT REMOTE STREAM');
-      this.props.dispatch(sessionActions.SET_REMOTE_STREAM(track));
-    };
-
-    peer.createOffer()
-      .then(description => this.createdDescription(description, this.props.to))
-      .catch(this.errorHandler);
-
-    this.props.dispatch(sessionActions.SET_PEER(peer));
+    const call = new VideoCall(
+      this.props.serverConnection, 
+      this.props.to | this.props.from, 
+      this.props.to ? VideoCall.CALLER : VideoCall.RECEIVER, 
+      peerConnectionConfig
+    );
+    this.props.dispatch(sessionActions.SET_VIDEOCALL(call));
   }
 
   startLocalVideo = _ => {
@@ -113,13 +75,7 @@ class App extends Component {
       // Get the stream.
       navigator.mediaDevices.getUserMedia(videoConstrains)
         .then(stream => {
-          this.props.dispatch (dispatch => {
-            let tracks = stream.getTracks();
-            for (let t of tracks)
-              this.props.peerConnection.addTrack(t);
-
-            dispatch(sessionActions.SET_LOCAL_STREAM(stream));
-          });
+          this.props.dispatch(sessionActions.SET_LOCAL_STREAM(stream));
         })
         .catch(this.errorHandler);
     } else {
@@ -133,7 +89,6 @@ class App extends Component {
 
   componentDidMount = _ => {
     this.startServerConnection();
-    this.startPeer();
 
     this.startLocalVideo();
     this.setStreams();
@@ -194,8 +149,10 @@ const mapStateToProps = store => ({
   remoteStream: store.remoteVideoStream,
   openList: store.openList,
   serverConnection: store.wsConnection,
+  videoCall: store.videoCall,
+
   to: store.to,
-  peerConnection: store.peerConnection,
+  from: store.from,
 });
 
 export default connect (mapStateToProps)(App);

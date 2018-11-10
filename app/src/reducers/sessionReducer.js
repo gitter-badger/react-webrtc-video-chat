@@ -1,13 +1,16 @@
 const initialState = {
     name: undefined,
+    id: undefined,
+
     to: undefined,
+    from: undefined,
     wsConnection: undefined,
     onlineUsersList: [],
     openList: true,
 
     localVideoStream: undefined,
     remoteVideoStream: undefined,
-    peerConnection: undefined,
+    videoCall: undefined,
 }
 
 function sessionReducer (state=initialState, action) {
@@ -18,7 +21,7 @@ function sessionReducer (state=initialState, action) {
         case 'SET_FROM':
         case 'SET_LIST':
         case 'SET_NAME':
-        case 'SET_PEER':
+        case 'SET_VIDEOCALL':
         case 'SET_LOCAL_STREAM':
         case 'SET_REMOTE_STREAM':
             return {
