@@ -26,7 +26,7 @@ class VideoCall {
 
     // * Event handlers
     onIceCandidate = ice => {
-        console.log('GOT CANDIDATE');
+        console.log('got self ice candidate');
         if(ice.candidate === null) return;
         console.log('candidate is ' + JSON.stringify(ice.candidate));
         this.server.send({
@@ -66,7 +66,7 @@ class VideoCall {
 
     signal = async ({ ice, sdp }) => {
         if (ice) {
-            console.log('got ice candidate');
+            console.log('got remote ice candidate');
             await this.peer.addIceCandidate(new RTCIceCandidate(ice));
         } 
         else if (sdp) {

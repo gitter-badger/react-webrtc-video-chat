@@ -28,31 +28,10 @@ export default {
         },
     }),
 
-    SET_LOCAL_STREAM: localVideoStream => ({
-        type: 'SET_LOCAL_STREAM',
+    SET_SERVER: serverConnection => ({
+        type: 'SET_SERVER',
         payload: {
-            localVideoStream
-        },
-    }),
-
-    SET_REMOTE_STREAM: remoteVideoStream => ({
-        type: 'SET_REMOTE_STREAM',
-        payload: {
-            remoteVideoStream
-        },
-    }),
-
-    SET_WS: wsConnection => ({
-        type: 'SET_WS',
-        payload: {
-            wsConnection
-        },
-    }),
-
-    SET_LIST: onlineUsersList => ({
-        type: 'SET_LIST',
-        payload: {
-            onlineUsersList
+            serverConnection
         },
     }),
 
@@ -61,10 +40,6 @@ export default {
         payload: {
             videoCall
         },
-    }),
-
-    TOGGLE_LIST: _ => ({
-        type: 'TOGGLE_LIST',
     }),
 
 };

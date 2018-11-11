@@ -1,18 +1,22 @@
 import React, { Component } from 'react';
 import { Modal, Input, Form, Button } from 'semantic-ui-react';
 
-import sessionActions from '../actions/sessionActions';
+import connectionActions from '../actions/connectionActions.js';
 import { connect } from 'react-redux';
 
 class StartupModal extends Component {
     state = {
         name: '',
-        nameInputRef: React.createRef (),
+    }
+
+    constructor (props) {
+        super(props);
+        this.nameInputRef = React.createRef ();
     }
 
     componentDidMount = _ => {
         // focus the textbox
-        this.state.nameInputRef.current.focus ();
+        this.nameInputRef.current.focus ();
     }
 
     handleNameInputChange = e => {
@@ -27,13 +31,13 @@ class StartupModal extends Component {
     }
 
     render = () => (
-        <Modal open={!this.props.name} className='animated bounce'>
-            <Modal.Header>Log in!</Modal.Header>
+        <Modal open className='animated bounce'>
+            <Modal.Header>Enter a username!</Modal.Header>
             <Modal.Content>
                 <Form>
                     <Form.Field>
                         <label>Name</label>
-                        <Input ref={this.state.nameInputRef} onChange={this.handleNameInputChange} />
+                        <Input ref={this.nameInputRef} onChange={this.handleNameInputChange} />
                     </Form.Field>
                     <Button type='submit' onClick={this.handleSubmitButton} color={this.state.name ? 'blue' : 'grey'}>Enter room!</Button>
                 </Form>
@@ -43,8 +47,7 @@ class StartupModal extends Component {
 }
 
 const mapStateToProps = store => ({
-    name: store.name,
-    serverConnection: store.wsConnection,
+    serverConnection: store.connection.serverConnection,
 });
 
 const mergeProps = (stateProps, dispatchProps) => {
@@ -59,7 +62,7 @@ const mergeProps = (stateProps, dispatchProps) => {
                 type: 'name',
                 name,
             });
-            dispatch(sessionActions.SET_NAME(name));
+            dispatch(connectionActions.SET_NAME(name));
         },
     };
 };

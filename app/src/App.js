@@ -3,9 +3,10 @@ import './App.css';
 import 'semantic-ui-css/semantic.min.css';
 
 import { connect } from 'react-redux';
-import sessionActions from './actions/sessionActions';
+import connectionActions from './actions/connectionActions';
+import uiActions from './actions/uiActions';
 
-import { Grid, Header, Icon, Button } from 'semantic-ui-react';
+import { Grid, Header, Icon } from 'semantic-ui-react';
 import { If } from 'react-extras';
 import Navbar from './components/Navbar';
 import StartupModal from './components/StartupModal';
@@ -19,9 +20,16 @@ import VideoCall from './util/VideoCall';
 // -----
 
 class App extends Component {
+
   state = {
-    localVideoRef: React.createRef(),
-    remoteVideoRef: React.createRef(),
+    localStream: undefined,
+    remoteStream: undefined,
+  }
+
+  constructor (props) {
+    super (props);
+    this.localVideoRef = React.createRef();
+    this.remoteVideoRef = React.createRef();
   }
 
   // * event handlers
@@ -30,38 +38,36 @@ class App extends Component {
     console.error(e);
   }
 
-  // * helpers
-  setStreams = _ => {
-    let localVideo = this.state.localVideoRef.current;
-    if (localVideo.srcObject !== this.props.localStream)
-      localVideo.srcObject = this.props.localStream;
-
-    let remoteVideo = this.state.remoteVideoRef.current;
-    if (this.props.videoCall) {
-      remoteVideo.srcObject = this.props.videoCall.getRemoteStream();
-    }
+  setLocalStream = _ => {
+    this.localVideoRef.current.srcObject = this.state.localStream;
   }
+
+  setRemoteStream = _ => {
+    this.remoteVideoRef.current.srcObject = this.state.remoteStream;
+  }
+
+  // * helpers
 
   startServerConnection = _ => {
     const socket = new SignalConnection('ws://localhost:8000/');
 
     socket.on('list', ({ list }) => {
-      this.props.dispatch(sessionActions.SET_LIST(list));
+      this.props.dispatch(uiActions.SET_USER_LIST(list));
     });
 
     socket.on('calling', ({ from }) => {
-      this.props.dispatch(sessionActions.SET_FROM(from));
+      this.props.dispatch(connectionActions.SET_FROM(from));
     });
 
     socket.on('id', ({ id }) => {
-      this.props.dispatch(sessionActions.SET_ID(id));
+      this.props.dispatch(connectionActions.SET_ID(id));
     });
 
     socket.on('signal', data => {
       this.props.videoCall.signal(data);
     });
 
-    this.props.dispatch(sessionActions.SET_WS(socket));
+    this.props.dispatch(connectionActions.SET_SERVER(socket));
   }
 
   startPeer = _ => {
@@ -71,19 +77,22 @@ class App extends Component {
       this.props.to ? VideoCall.CALLER : VideoCall.RECEIVER
     );
     
-    this.props.dispatch(sessionActions.SET_VIDEOCALL(call));
+    this.props.dispatch(connectionActions.SET_VIDEOCALL(call));
 
-    call.addLocalStream(this.props.localStream);
+    call.addLocalStream(this.state.localStream);
   }
 
-  startLocalVideo = _ => {
+  startLocalVideo = async _ => {
     if (navigator.mediaDevices.getUserMedia) {
-      // Get the stream.
-      navigator.mediaDevices.getUserMedia(videoConstrains)
-        .then(stream => {
-          this.props.dispatch(sessionActions.SET_LOCAL_STREAM(stream));
-        })
-        .catch(this.errorHandler);
+      try {
+        let localStream = await navigator.mediaDevices.getUserMedia(videoConstrains);
+        this.setState({
+          localStream,
+        });
+        this.setLocalStream();
+      } catch (error) {
+        this.errorHandler(error);
+      }
     } else {
       alert ('Switch to Chrome or Firefox!');
       return Error();
@@ -97,11 +106,11 @@ class App extends Component {
     this.startServerConnection();
 
     this.startLocalVideo();
-    this.setStreams();
+    // this.setStreams();
   }
 
   componentDidUpdate = _ => {
-    this.setStreams();
+    // this.setStreams();
 
     if (this.props.to || this.props.from) {
       if (!this.props.videoCall)
@@ -110,19 +119,19 @@ class App extends Component {
   };
 
   // * main component
-  render() {
+  render = () => {
     return (
       <div className="App">
         <Navbar />
 
-        <StartupModal />
+        <If condition={!this.props.name}>
+          <StartupModal />
+        </If>
         
         <div className="AppContent">
-          {this.props.openList ? <UserSelector /> : null}
-
-          <Button onClick={_ => {
-            alert (this.props.videoCall.peer.iceGatheringState)
-          }}> Submit </Button>
+          <If condition={this.props.isUserListOpen}>
+            <UserSelector disabled={!this.state.localStream} />
+          </If>
 
           <Grid columns="2" divided stackable>
             
@@ -137,8 +146,7 @@ class App extends Component {
                 <If condition={!this.props.videoCall}>
                   <PlaceholderVideo />
                 </If>
-
-                <video ref={this.state.remoteVideoRef} autoPlay muted id="id" hidden={false} />
+                <video ref={this.remoteVideoRef} autoPlay muted id="remoteVideo" hidden={false} />
               </Grid.Column>
             </Grid.Row>
 
@@ -150,11 +158,10 @@ class App extends Component {
                 </Header>
               </Grid.Column>
               <Grid.Column width={9}>
-                <If condition={!this.props.localStream}>
+                <If condition={!this.state.localStream}>
                   <PlaceholderVideo />
                 </If>
-
-                <video ref={this.state.localVideoRef} autoPlay muted id="id" hidden={this.props.localStream ? false : true} />
+                <video ref={this.localVideoRef} autoPlay muted id="localVideo" hidden={!this.state.localStream} />
               </Grid.Column>
             </Grid.Row>
             
@@ -168,14 +175,13 @@ class App extends Component {
 // -----
 
 const mapStateToProps = store => ({
-  localStream: store.localVideoStream,
-  remoteStream: store.remoteVideoStream,
-  openList: store.openList,
-  serverConnection: store.wsConnection,
-  videoCall: store.videoCall,
+  isUserListOpen: store.ui.openUsersList,
+  serverConnection: store.connection.serverConnection,
+  videoCall: store.connection.videoCall,
 
-  to: store.to,
-  from: store.from,
+  name: store.connection.name,
+  to: store.connection.to,
+  from: store.connection.from,
 });
 
 export default connect (mapStateToProps)(App);

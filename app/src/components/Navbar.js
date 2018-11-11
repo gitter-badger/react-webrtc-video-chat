@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Menu, Sticky } from 'semantic-ui-react';
 
 import { connect } from 'react-redux';
-import sessionActions from '../actions/sessionActions';
+import uiActions from '../actions/uiActions';
 
 class Navbar extends Component {
     render = () => (
@@ -11,14 +11,20 @@ class Navbar extends Component {
                 <Menu.Item
                     icon='user circle'
                     name='Shakal'
-                    onClick={this.handleMenuClick}
                 />
-
+    
                 <Menu.Item
                     icon='users'
                     name='Online Users'
                     onClick={this.props.toggleList}
                     active={this.props.isOnlineListOpen}
+                />
+    
+                <Menu.Item
+                    icon='bug'
+                    position='right'
+                    onClick={this.props.toggleDebugDialog}
+                    active={this.props.isDebugDialogOpen}
                 />
             </Menu>
         </Sticky>
@@ -26,12 +32,13 @@ class Navbar extends Component {
 }
 
 const mapStateToProps = store => ({
-    isOnlineListOpen: store.openList,
+    isOnlineListOpen: store.ui.openUsersList,
+    isDebugDialogOpen: store.ui.openDebugDialog,
 });
 
 const mapDispatchToProps = dispatch => ({
-    toggleList: _ => dispatch(sessionActions.TOGGLE_LIST()),
+    toggleList: _ => dispatch(uiActions.TOGGLE_USER_LIST()),
+    toggleDebugDialog: _ => dispatch(uiActions.TOGGLE_DEBUG_DIALOG()),
 });
     
 export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
-    
