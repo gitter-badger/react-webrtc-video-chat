@@ -31,7 +31,7 @@ class StartupModal extends Component {
     }
 
     render = () => (
-        <Modal open className='animated bounce'>
+        <Modal open className='animated bounceIn'>
             <Modal.Header>Enter a username!</Modal.Header>
             <Modal.Content>
                 <Form>
@@ -39,7 +39,7 @@ class StartupModal extends Component {
                         <label>Name</label>
                         <Input ref={this.nameInputRef} onChange={this.handleNameInputChange} />
                     </Form.Field>
-                    <Button type='submit' onClick={this.handleSubmitButton} color={this.state.name ? 'blue' : 'grey'}>Enter room!</Button>
+                    <Button type='submit' onClick={this.handleSubmitButton} color={this.state.name ? 'blue' : 'grey'}>Join room!</Button>
                 </Form>
             </Modal.Content>
         </Modal>

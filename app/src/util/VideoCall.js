@@ -5,17 +5,21 @@ class VideoCall {
     static CALLER = 'caller';
     static RECEIVER = 'receiver';
 
-    constructor(ws, remote, type, config=peerConnectionConfig) {
-        const peer = new RTCPeerConnection(config);
+    constructor(params, peerconfig=peerConnectionConfig) {
+        const peer = new RTCPeerConnection(peerconfig);
         peer.onicecandidate = this.onIceCandidate;
         peer.ontrack = this.onTrack;
 
         this.peer = peer;
         this.tracks = [];
-        this.remote = remote;
-        this.server = ws;
+        this.remote = params.remote;
+        this.server = params.serverConnection;
 
-        if (type === 'caller') {
+        const tracks = params.stream.getTracks();
+        for (let track of tracks)
+            peer.addTrack(track);
+
+        if (params.type === 'caller') {
             peer.createOffer({
                 offerToReceiveAudio: true,
                 offerToReceiveVideo: true,                
@@ -50,14 +54,6 @@ class VideoCall {
             sdp: this.peer.localDescription,
             to: this.remote,
         });
-    }
-
-    // * Methods
-    addLocalStream = stream => {
-        console.log('added tracks')
-        let tracks = stream.getTracks();
-        for (let track of tracks)
-            this.peer.addTrack(track);
     }
 
     getRemoteStream = _ => {

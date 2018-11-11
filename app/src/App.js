@@ -71,15 +71,15 @@ class App extends Component {
   }
 
   startPeer = _ => {
-    const call = new VideoCall(
-      this.props.serverConnection, 
-      this.props.to || this.props.from, 
-      this.props.to ? VideoCall.CALLER : VideoCall.RECEIVER
-    );
-    
-    this.props.dispatch(connectionActions.SET_VIDEOCALL(call));
+    let params = {
+      serverConnection: this.props.serverConnection, 
+      remote: this.props.to || this.props.from, 
+      type: this.props.to ? VideoCall.CALLER : VideoCall.RECEIVER,
+      stream: this.state.localStream,
+    }
 
-    call.addLocalStream(this.state.localStream);
+    const call = new VideoCall(params);
+    this.props.dispatch(connectionActions.SET_VIDEOCALL(call));
   }
 
   startLocalVideo = async _ => {
@@ -136,22 +136,22 @@ class App extends Component {
           <Grid columns="2" divided stackable>
             
             <Grid.Row>
-              <Grid.Column width={2}>
+              <Grid.Column width={3}>
                 <Header as="h2" icon textAlign="center">
                   <Icon name='wifi' circular />
                   <Header.Content>Them</Header.Content>
                 </Header>
               </Grid.Column>
-              <Grid.Column width={9}>
+              <Grid.Column width={9} textAlign='center'>
                 <If condition={!this.props.videoCall}>
                   <PlaceholderVideo />
                 </If>
-                <video ref={this.remoteVideoRef} autoPlay muted id="remoteVideo" hidden={false} />
+                <video ref={this.remoteVideoRef} autoPlay muted id="remoteVideo" hidden={!this.props.videoCall} />
               </Grid.Column>
             </Grid.Row>
 
             <Grid.Row>
-              <Grid.Column width={2}>
+              <Grid.Column width={3}>
                 <Header as="h2" icon textAlign="center">
                   <Icon name='user' circular />
                   <Header.Content>You</Header.Content>
