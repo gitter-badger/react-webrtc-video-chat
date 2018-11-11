@@ -109,25 +109,6 @@ class App extends Component {
     }
   };
 
-  // * subcomponents
-  videoRow = ({ icon, header, stream, passToRef, id }) => (
-    <Grid.Row>
-      <Grid.Column width={2}>
-        <Header as="h2" icon textAlign="center">
-          <Icon name={icon} circular />
-          <Header.Content>{header}</Header.Content>
-        </Header>
-      </Grid.Column>
-      <Grid.Column width={9}>
-        <If condition={!stream}>
-          <PlaceholderVideo />
-        </If>
-
-        <video ref={passToRef} autoPlay muted id="id" hidden={stream ? false : true} />
-      </Grid.Column>
-    </Grid.Row>
-  );
-
   // * main component
   render() {
     return (
@@ -144,8 +125,39 @@ class App extends Component {
           }}> Submit </Button>
 
           <Grid columns="2" divided stackable>
-            <this.videoRow icon='wifi' header='Them' passToRef={this.state.remoteVideoRef} stream={this.props.remoteStream} id='remoteVideo' />
-            <this.videoRow icon='user' header='You' passToRef={this.state.localVideoRef} stream={this.props.localStream} id='localVideo' />
+            
+            <Grid.Row>
+              <Grid.Column width={2}>
+                <Header as="h2" icon textAlign="center">
+                  <Icon name='wifi' circular />
+                  <Header.Content>Them</Header.Content>
+                </Header>
+              </Grid.Column>
+              <Grid.Column width={9}>
+                <If condition={!this.props.videoCall}>
+                  <PlaceholderVideo />
+                </If>
+
+                <video ref={this.state.remoteVideoRef} autoPlay muted id="id" hidden={false} />
+              </Grid.Column>
+            </Grid.Row>
+
+            <Grid.Row>
+              <Grid.Column width={2}>
+                <Header as="h2" icon textAlign="center">
+                  <Icon name='user' circular />
+                  <Header.Content>You</Header.Content>
+                </Header>
+              </Grid.Column>
+              <Grid.Column width={9}>
+                <If condition={!this.props.localStream}>
+                  <PlaceholderVideo />
+                </If>
+
+                <video ref={this.state.localVideoRef} autoPlay muted id="id" hidden={this.props.localStream ? false : true} />
+              </Grid.Column>
+            </Grid.Row>
+            
           </Grid>
         </div>
       </div>
