@@ -31,15 +31,15 @@ class App extends Component {
   }
 
   // * helpers
-
   setStreams = _ => {
     let localVideo = this.state.localVideoRef.current;
     if (localVideo.srcObject !== this.props.localStream)
       localVideo.srcObject = this.props.localStream;
 
     let remoteVideo = this.state.remoteVideoRef.current;
-    if (remoteVideo.srcObject !== this.props.remoteStream)
-      remoteVideo.srcObject = this.props.remoteStream;
+    if (this.props.videoCall) {
+      remoteVideo.srcObject = this.props.videoCall.getRemoteStream();
+    }
   }
 
   startServerConnection = _ => {
@@ -71,9 +71,9 @@ class App extends Component {
       this.props.to ? VideoCall.CALLER : VideoCall.RECEIVER
     );
     
-    // call.addLocalStream(this.props.localVideoStream);
-
     this.props.dispatch(sessionActions.SET_VIDEOCALL(call));
+
+    call.addLocalStream(this.props.localStream);
   }
 
   startLocalVideo = _ => {

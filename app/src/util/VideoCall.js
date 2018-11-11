@@ -26,8 +26,9 @@ class VideoCall {
 
     // * Event handlers
     onIceCandidate = ice => {
-        console.log('GOT CANDIDATE ' + JSON.stringify(ice.candidate));
+        console.log('GOT CANDIDATE');
         if(ice.candidate === null) return;
+        console.log('candidate is ' + JSON.stringify(ice.candidate));
         this.server.send({
             type: 'signal',
             ice: ice.candidate,
@@ -36,7 +37,7 @@ class VideoCall {
     }
 
     onTrack = track => {
-        alert('GOT REMOTE STREAM');
+        console.log('😆 GOT REMOTE STREAM');
         this.tracks.push(track);
     }
 
@@ -53,16 +54,14 @@ class VideoCall {
 
     // * Methods
     addLocalStream = stream => {
+        console.log('added tracks')
         let tracks = stream.getTracks();
-        tracks.forEach(this.peer.addTrack);
+        for (let track of tracks)
+            this.peer.addTrack(track);
     }
 
     getRemoteStream = _ => {
         return new MediaStream(this.tracks);
-    }
-
-    getPeer = _ => {
-        return this.peer;
     }
 
     signal = async ({ ice, sdp }) => {
@@ -75,7 +74,7 @@ class VideoCall {
             await this.peer.setRemoteDescription(new RTCSessionDescription(sdp))
             if(sdp.type === 'offer') { // Only create answers in response to offers
                 console.log ('creating answer');
-                let description = await this.peer.createAnswer()
+                let description = await this.peer.createAnswer();
                 this.createdDescription(description);
             }
         }
