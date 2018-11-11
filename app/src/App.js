@@ -5,15 +5,15 @@ import 'semantic-ui-css/semantic.min.css';
 import { connect } from 'react-redux';
 import sessionActions from './actions/sessionActions';
 
-import { Grid, Header, Icon } from 'semantic-ui-react';
+import { Grid, Header, Icon, Button } from 'semantic-ui-react';
 import { If } from 'react-extras';
 import Navbar from './components/Navbar';
 import StartupModal from './components/StartupModal';
 import UserSelector from './components/UserSelector';
 import PlaceholderVideo from './components/PlaceholderVideo';
 
-import { videoConstrains, peerConnectionConfig } from './util/config';
-import { SignalConnection } from './util';
+import { videoConstrains } from './util/config';
+import SignalConnection from './util/SignalConnection';
 import VideoCall from './util/VideoCall';
 
 // -----
@@ -68,8 +68,7 @@ class App extends Component {
     const call = new VideoCall(
       this.props.serverConnection, 
       this.props.to || this.props.from, 
-      this.props.to ? VideoCall.CALLER : VideoCall.RECEIVER, 
-      peerConnectionConfig
+      this.props.to ? VideoCall.CALLER : VideoCall.RECEIVER
     );
     
     // call.addLocalStream(this.props.localVideoStream);
@@ -139,6 +138,10 @@ class App extends Component {
         
         <div className="AppContent">
           {this.props.openList ? <UserSelector /> : null}
+
+          <Button onClick={_ => {
+            alert (this.props.videoCall.peer.iceGatheringState)
+          }}> Submit </Button>
 
           <Grid columns="2" divided stackable>
             <this.videoRow icon='wifi' header='Them' passToRef={this.state.remoteVideoRef} stream={this.props.remoteStream} id='remoteVideo' />

@@ -1,10 +1,12 @@
+import { peerConnectionConfig } from './config';
+
 class VideoCall {
 
     static CALLER = 'caller';
     static RECEIVER = 'receiver';
 
-    constructor(ws, remote, type, peerConnectionConfig) {
-        const peer = new RTCPeerConnection(peerConnectionConfig);
+    constructor(ws, remote, type, config=peerConnectionConfig) {
+        const peer = new RTCPeerConnection(config);
         peer.onicecandidate = this.onIceCandidate;
         peer.ontrack = this.onTrack;
 
@@ -14,21 +16,23 @@ class VideoCall {
         this.server = ws;
 
         if (type === 'caller') {
-            peer.createOffer()
+            peer.createOffer({
+                offerToReceiveAudio: true,
+                offerToReceiveVideo: true,                
+            })
             .then(this.createdDescription);
         }
     }
 
     // * Event handlers
     onIceCandidate = ice => {
-        alert('GOT ' + JSON.stringify(ice));
-        if(ice.candidate !== null) {
-            this.server.send({
-                type: 'signal',
-                ice: ice.candidate,
-                to: this.remote,
-            });
-        }
+        console.log('GOT CANDIDATE ' + JSON.stringify(ice.candidate));
+        if(ice.candidate === null) return;
+        this.server.send({
+            type: 'signal',
+            ice: ice.candidate,
+            to: this.remote,
+        });
     }
 
     onTrack = track => {
@@ -38,6 +42,7 @@ class VideoCall {
 
     // * Helpers
     createdDescription = async description => {
+        console.log('got local description');
         await this.peer.setLocalDescription(description);
         this.server.send({
             type: 'signal',
@@ -47,23 +52,30 @@ class VideoCall {
     }
 
     // * Methods
-    addLocalStream = (stream) => {
+    addLocalStream = stream => {
         let tracks = stream.getTracks();
         tracks.forEach(this.peer.addTrack);
     }
 
-    get getRemoteStream () {
+    getRemoteStream = _ => {
         return new MediaStream(this.tracks);
+    }
+
+    getPeer = _ => {
+        return this.peer;
     }
 
     signal = async ({ ice, sdp }) => {
         if (ice) {
+            console.log('got ice candidate');
             await this.peer.addIceCandidate(new RTCIceCandidate(ice));
         } 
         else if (sdp) {
+            console.log('got remote description');
             await this.peer.setRemoteDescription(new RTCSessionDescription(sdp))
             if(sdp.type === 'offer') { // Only create answers in response to offers
-                const description = await this.peer.createAnswer();
+                console.log ('creating answer');
+                let description = await this.peer.createAnswer()
                 this.createdDescription(description);
             }
         }

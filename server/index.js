@@ -37,7 +37,6 @@ ws.on('connection', socket => {
     socket.send(MESSAGES.sendId(socket.id));
 
     socket.on('message', data => {
-        console.log('RECEIVED TEXT: ', data);
         // parse string
         data = JSON.parse(data);
         log(socket.name ? socket.name : socket.id, data);

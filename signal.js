@@ -50,7 +50,10 @@ function start(isCaller) {
 
 
   peerConnection = new RTCPeerConnection(peerConnectionConfig);
-  peerConnection.onicecandidate = gotIceCandidate;
+  peerConnection.onicecandidate = ice => {
+    alert(JSON.stringify(ice));
+    gotIceCandidate(ice);
+  };
   peerConnection.ontrack = gotRemoteStream;
   peerConnection.addStream(localStream);
 
