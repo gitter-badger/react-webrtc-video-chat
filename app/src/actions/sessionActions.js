@@ -7,6 +7,13 @@ export default {
         },
     }),
 
+    SET_ID: id => ({
+        type: 'SET_ID',
+        payload: {
+            id
+        },
+    }),
+
     SET_TO: to => ({
         type: 'SET_TO',
         payload: {
@@ -50,7 +57,7 @@ export default {
     }),
 
     SET_VIDEOCALL: videoCall => ({
-        type: 'SET_PEER',
+        type: 'SET_VIDEOCALL',
         payload: {
             videoCall
         },

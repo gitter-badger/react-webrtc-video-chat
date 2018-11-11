@@ -5,14 +5,25 @@ module.exports = {
         list,
     }),
 
+    calling: (to, from) => JSON.stringify({
+        type: 'calling',
+        to,
+        from,
+    }),
+
+    sendId: id => JSON.stringify({
+        type: 'id',
+        id,
+    }),
+
     error: (status, error) => JSON.stringify({
+        type: 'error',
         status,
         error,
     }),
 
-    signal: (signal, from) => JSON.stringify({
-        type: 'signal',
-        signal,
+    signal: (data, from) => JSON.stringify({
+        ...data,
         from,
     }),
 

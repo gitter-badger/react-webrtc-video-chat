@@ -34,6 +34,7 @@ ws.getSafeClientsList = function getClientsList() {
 ws.on('connection', socket => {
     socket.id = uuid();
     console.log('Connected: ', socket.id);
+    socket.send(MESSAGES.sendId(socket.id));
 
     socket.on('message', data => {
         console.log('RECEIVED TEXT: ', data);
@@ -49,16 +50,22 @@ ws.on('connection', socket => {
 
             case 'list':
                 socket.send(MESSAGES.clientList(ws.getSafeClientsList ()));
-                console.log ('Sending : ', JSON.stringify (ws.getSafeClientsList ()));
+            break;
+
+            case 'call':
+                let r = Array.from (ws.clients).find(e => e.id == data.to);
+                if (r)
+                    r.send(MESSAGES.calling(data.to, socket.id));
+                else
+                    socket.send(MESSAGES.error(404, 'No receiver with such ID found.'));
             break;
 
             case 'signal':
                 let receiver = Array.from (ws.clients).find(e => e.id == data.to);
-                if (receiver) {
-                    receiver.send(MESSAGES.signal(data.signal, socket.id));
-                } else {
-                    socket.send(MESSAGES.error(404, 'No receiver with such ID found.'));
-                }
+                if (receiver)
+                    receiver.send(MESSAGES.signal(data, socket.id));
+                else
+                    socket.send(MESSAGES.error(404, `No receiver with such ID found: ${data.to}`));
             break;
 
             default:

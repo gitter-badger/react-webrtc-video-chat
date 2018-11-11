@@ -3,29 +3,30 @@ class VideoCall {
     static CALLER = 'caller';
     static RECEIVER = 'receiver';
 
-    constructor(ws, to, type, peerConnectionConfig) {
+    constructor(ws, remote, type, peerConnectionConfig) {
         const peer = new RTCPeerConnection(peerConnectionConfig);
-        this.peer = peer;
-        this.tracks = [];
-        this.to = to;
-        this.server = ws;
-
         peer.onicecandidate = this.onIceCandidate;
         peer.ontrack = this.onTrack;
 
+        this.peer = peer;
+        this.tracks = [];
+        this.remote = remote;
+        this.server = ws;
+
         if (type === 'caller') {
             peer.createOffer()
-            .then(description => this.createdDescription(description, this.to));
+            .then(this.createdDescription);
         }
     }
 
     // * Event handlers
     onIceCandidate = ice => {
-        if(ice.candidate) {
+        alert('GOT ' + JSON.stringify(ice));
+        if(ice.candidate !== null) {
             this.server.send({
                 type: 'signal',
                 ice: ice.candidate,
-                to: this.to,
+                to: this.remote,
             });
         }
     }
@@ -41,12 +42,12 @@ class VideoCall {
         this.server.send({
             type: 'signal',
             sdp: this.peer.localDescription,
-            to: this.to,
+            to: this.remote,
         });
     }
 
     // * Methods
-    set addLocalStream (stream) {
+    addLocalStream = (stream) => {
         let tracks = stream.getTracks();
         tracks.forEach(this.peer.addTrack);
     }
@@ -55,7 +56,7 @@ class VideoCall {
         return new MediaStream(this.tracks);
     }
 
-    signal = async ({ ice, sdp, from }) => {
+    signal = async ({ ice, sdp }) => {
         if (ice) {
             await this.peer.addIceCandidate(new RTCIceCandidate(ice));
         } 
@@ -63,7 +64,7 @@ class VideoCall {
             await this.peer.setRemoteDescription(new RTCSessionDescription(sdp))
             if(sdp.type === 'offer') { // Only create answers in response to offers
                 const description = await this.peer.createAnswer();
-                this.createdDescription(description, from);
+                this.createdDescription(description);
             }
         }
     }

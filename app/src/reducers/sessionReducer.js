@@ -17,6 +17,7 @@ function sessionReducer (state=initialState, action) {
     switch (action.type) {
 
         case 'SET_WS':
+        case 'SET_ID':
         case 'SET_TO':
         case 'SET_FROM':
         case 'SET_LIST':

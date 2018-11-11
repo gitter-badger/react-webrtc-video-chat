@@ -53,6 +53,10 @@ class App extends Component {
       this.props.dispatch(sessionActions.SET_FROM(from));
     });
 
+    socket.on('id', ({ id }) => {
+      this.props.dispatch(sessionActions.SET_ID(id));
+    });
+
     socket.on('signal', data => {
       this.props.videoCall.signal(data);
     });
@@ -63,10 +67,13 @@ class App extends Component {
   startPeer = _ => {
     const call = new VideoCall(
       this.props.serverConnection, 
-      this.props.to | this.props.from, 
+      this.props.to || this.props.from, 
       this.props.to ? VideoCall.CALLER : VideoCall.RECEIVER, 
       peerConnectionConfig
     );
+    
+    // call.addLocalStream(this.props.localVideoStream);
+
     this.props.dispatch(sessionActions.SET_VIDEOCALL(call));
   }
 
@@ -98,7 +105,8 @@ class App extends Component {
     this.setStreams();
 
     if (this.props.to || this.props.from) {
-      this.startPeer();
+      if (!this.props.videoCall)
+        this.startPeer();
     }
   };
 

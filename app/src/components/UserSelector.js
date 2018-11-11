@@ -16,7 +16,7 @@ function UserSelector (props) {
     }
 
     let i = 0;
-    let items = props.onlineUsersList.map(e => (<List.Item key={i++} uuid={e.id} disabled={props.to === e.id}> {e.name ? e.name : e.id} </List.Item>));
+    let items = props.onlineUsersList.filter(e => e.id !== props.userId).map(e => (<List.Item key={i++} uuid={e.id} disabled={props.to === e.id}> {e.name ? e.name : e.id} </List.Item>));
 
     return (
         <Card fluid raised className='animated bounce'>
@@ -31,6 +31,8 @@ function UserSelector (props) {
 }
 
 const mapStateToProps = store => ({
+    userId: store.id,
+
     onlineUsersList: store.onlineUsersList,
     serverConnection: store.wsConnection,
     to: store.to,
