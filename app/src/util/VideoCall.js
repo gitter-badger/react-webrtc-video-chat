@@ -1,11 +1,12 @@
 import { peerConnectionConfig } from './config';
 
-class VideoCall {
+class VideoCall extends EventTarget {
 
     static CALLER = 'caller';
     static RECEIVER = 'receiver';
 
     constructor(params, peerconfig=peerConnectionConfig) {
+        super();
         const peer = new RTCPeerConnection(peerconfig);
         peer.onicecandidate = this.onIceCandidate;
         peer.ontrack = this.onTrack;
@@ -28,6 +29,9 @@ class VideoCall {
         }
     }
 
+    // Short hand form.
+    on = this.addEventListener;
+
     // * Event handlers
     onIceCandidate = ice => {
         console.log('got self ice candidate');
@@ -40,9 +44,10 @@ class VideoCall {
         });
     }
 
-    onTrack = track => {
+    onTrack = tevent => {
         console.log('😆 GOT REMOTE STREAM');
-        this.tracks.push(track);
+        this.tracks.push(tevent.track);
+        this.dispatchEvent(new CustomEvent('track', { detail: tevent.track }));
     }
 
     // * Helpers
@@ -56,7 +61,7 @@ class VideoCall {
         });
     }
 
-    getRemoteStream = _ => {
+    get remoteStream () {
         return new MediaStream(this.tracks);
     }
 

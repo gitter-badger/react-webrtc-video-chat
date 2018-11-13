@@ -79,6 +79,12 @@ class App extends Component {
     }
 
     const call = new VideoCall(params);
+    call.on('track', track => {
+      this.setState({
+        remoteStream: call.remoteStream
+      });
+      this.setRemoteStream();
+    });
     this.props.dispatch(connectionActions.SET_VIDEOCALL(call));
   }
 
@@ -100,18 +106,13 @@ class App extends Component {
   }
 
   // * hooks
-  // TODO: Fix hooks.
 
   componentDidMount = _ => {
     this.startServerConnection();
-
     this.startLocalVideo();
-    // this.setStreams();
   }
 
   componentDidUpdate = _ => {
-    // this.setStreams();
-
     if (this.props.to || this.props.from) {
       if (!this.props.videoCall)
         this.startPeer();
@@ -146,7 +147,7 @@ class App extends Component {
                 <If condition={!this.props.videoCall}>
                   <PlaceholderVideo />
                 </If>
-                <video ref={this.remoteVideoRef} autoPlay muted id="remoteVideo" hidden={!this.props.videoCall} />
+                <video ref={this.remoteVideoRef} autoPlay muted id="remoteVideo" hidden={!this.state.remoteStream} />
               </Grid.Column>
             </Grid.Row>
 

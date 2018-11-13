@@ -1,0 +1,10 @@
+{
+  "name": "shakal-io",
+  "version": "1.0.0",
+  "description": "Video Calling",
+  "main": "server/index.js",
+  "repository": "https://github.com/vixrant/shakal-io.git",
+  "author": "Vikrant Gajria <vikrantgajria@gmail.com>",
+  "license": "MIT",
+  "private": false
+}
