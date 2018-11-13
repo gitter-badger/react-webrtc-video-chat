@@ -1,7 +1,7 @@
 {
   "name": "shakal-io",
   "version": "1.0.0",
-  "description": "Video Calling",
+  "description": "P2P video calling using webRTC",
   "main": "server/index.js",
   "repository": "https://github.com/vixrant/shakal-io.git",
   "author": "Vikrant Gajria <vikrantgajria@gmail.com>",

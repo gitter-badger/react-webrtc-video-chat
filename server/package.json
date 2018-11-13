@@ -1,11 +1,11 @@
 {
-  "name": "shakal-io",
+  "name": "shakal-io-signal",
   "version": "1.0.0",
-  "description": "WebRTC based video calling website.",
+  "description": "WebSocket signaling server for webRTC based video calling.",
   "main": "index.js",
-  "author": "vixrant",
+  "author": "Vikrant Gajria <vikrantgajria@gmail.com>",
   "license": "MIT",
-  "private": true,
+  "private": false,
   "dependencies": {
     "express": "^4.16.4",
     "lodash": "^4.17.11",
