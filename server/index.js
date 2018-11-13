@@ -83,6 +83,10 @@ ws.on('connection', socket => {
         }
     });
 
+    socket.on('close', event => {
+        ws.broadcast(MESSAGES.clientList(ws.getSafeClientsList ()));
+    });
+
     socket.on('error', console.error);
 });
 

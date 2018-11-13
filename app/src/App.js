@@ -147,7 +147,7 @@ class App extends Component {
                 <If condition={!this.props.videoCall}>
                   <PlaceholderVideo />
                 </If>
-                <video ref={this.remoteVideoRef} autoPlay muted id="remoteVideo" hidden={!this.state.remoteStream} />
+                <video ref={this.remoteVideoRef} autoPlay id="remoteVideo" hidden={!this.state.remoteStream} />
               </Grid.Column>
             </Grid.Row>
 

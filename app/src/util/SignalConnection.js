@@ -4,7 +4,7 @@ import _ from 'lodash';
 export default class SignalConnection extends EventEmitter {
     constructor () {
         super();
-        this.ws = new WebSocket ('ws://shakal-io-server.herokuapp.com/');
+        this.ws = new WebSocket ('wss://shakal-io-signal.herokuapp.com/');
 
         this.ws.onmessage = message => {
             let messageJson = JSON.parse(message.data);
