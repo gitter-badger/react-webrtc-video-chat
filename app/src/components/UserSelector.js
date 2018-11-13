@@ -19,7 +19,7 @@ function UserSelector (props) {
     let items = props.onlineUsersList.filter(e => e.id !== props.userId).map(e => (<List.Item key={i++} uuid={e.id} disabled={props.to === e.id}> {e.name ? e.name : e.id} </List.Item>));
 
     return (
-        <Card fluid raised className='animated bounceIn'>
+        <Card fluid raised className='animated bounceInDown'>
             <Card.Content>
                 <Card.Header>Select User to Call</Card.Header>
             </Card.Content>

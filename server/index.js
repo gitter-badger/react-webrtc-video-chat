@@ -1,9 +1,20 @@
 const WebSocket = require('ws').Server;
 const uuid = require('uuid/v1');
 
+const http = require('http');
+
 const _ = require('lodash');
 
 const MESSAGES = require('./messages');
+
+// -----
+
+const server = http.createServer((req, res) => {
+    res.write("WS server running!");
+    res.end();
+});
+
+// -----
 
 function log (id, data) {
     data = _.omit(data, 'signal')
@@ -14,7 +25,7 @@ function log (id, data) {
 }
 
 const ws = new WebSocket({
-    port: 8000,
+    server,
 });
 
 ws.broadcast = function broadcast(data) {
@@ -79,3 +90,8 @@ ws.on('error', e => {
     console.error(e);
     process.exit(-1);
 });
+
+// -----
+
+server.listen(process.env.PORT || 5000);
+console.log('Running!');
