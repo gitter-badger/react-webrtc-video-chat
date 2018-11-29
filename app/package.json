@@ -6,7 +6,7 @@
   "dependencies": {
     "animate.css": "^3.7.0",
     "lodash": "^4.17.11",
-    "react": "^16.6.0",
+    "react": "^16.7.0-alpha.2",
     "react-dom": "^16.6.0",
     "react-extras": "^0.7.1",
     "react-redux": "^5.1.0",
