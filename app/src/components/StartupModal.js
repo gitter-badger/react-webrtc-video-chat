@@ -26,7 +26,7 @@ function StartupModal (props) {
                         <label>Name</label>
                         <Input ref={nameInputRef} {...name} />
                     </Form.Field>
-                    <Button type='submit' onClick={handleSubmitButton} color={name.value ? 'blue' : 'grey'}>Join room!</Button>
+                    <Button type='submit' onClick={handleSubmitButton} color={name.value && props.serverConnection ? 'blue' : 'grey'}>Join room!</Button>
                 </Form>
             </Modal.Content>
         </Modal>
