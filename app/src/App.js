@@ -18,13 +18,17 @@ import SignalConnection from './util/SignalConnection';
 import VideoCall from './util/VideoCall';
 
 function App (props) {
-  const [localStream, setLocalStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
+  const localStream = useLocalStream();
 
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
 
-  useEffect(_ => );
+  useEffect(_ => {
+    if (localStream)
+      localVideoRef.current.srcObject = localStream;
+  }, [localStream]);
+
 }
 
 function startServerConnection (dispatch) {
@@ -49,13 +53,13 @@ function startServerConnection (dispatch) {
   dispatch(connectionActions.SET_SERVER(socket));
 }
 
-async function startLocalVideo (setLocalVideo) {
+async function useLocalStream () {
+  const [localStream, setLocalStream] = useState(null);
   try {
-    let localStream = await navigator.mediaDevices.getUserMedia(videoConstrains);
-    this.setState({
-      localStream,
-    });
-    this.setLocalStream();
+    let ls = await navigator.mediaDevices.getUserMedia(videoConstrains);
+    setLocalStream(ls);
+
+    return localStream;
   } catch (error) {
     errorHandler(error);
   }
@@ -69,7 +73,7 @@ function errorHandler (e) {
 class AppC extends Component {
 
   setLocalStream = _ => {
-    this.localVideoRef.current.srcObject = this.state.localStream;
+    
   }
 
   setRemoteStream = _ => {
