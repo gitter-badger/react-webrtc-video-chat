@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
 
@@ -17,16 +17,14 @@ import { videoConstrains } from './util/config';
 import SignalConnection from './util/SignalConnection';
 import VideoCall from './util/VideoCall';
 
-function App () {
+function App (props) {
+  const [localStream, setLocalStream] = useState(null);
+  const [remoteStream, setRemoteStream] = useState(null);
+
 
 }
 
 class AppC extends Component {
-
-  state = {
-    localStream: undefined,
-    remoteStream: undefined,
-  }
 
   constructor (props) {
     super (props);
