@@ -1,4 +1,4 @@
-import React, { Component, useState, useRef } from 'react';
+import React, { Component, useState, useRef, useEffect } from 'react';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
 
@@ -23,15 +23,50 @@ function App (props) {
 
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
+
+  useEffect(_ => );
+}
+
+function startServerConnection (dispatch) {
+  const socket = new SignalConnection('ws://localhost:8000/');
+
+  socket.on('list', ({ list }) => {
+    dispatch(uiActions.SET_USER_LIST(list));
+  });
+
+  socket.on('calling', ({ from }) => {
+    dispatch(connectionActions.SET_FROM(from));
+  });
+
+  socket.on('id', ({ id }) => {
+    dispatch(connectionActions.SET_ID(id));
+  });
+
+  socket.on('signal', data => {
+    videoCall.signal(data);
+  });
+
+  dispatch(connectionActions.SET_SERVER(socket));
+}
+
+async function startLocalVideo (setLocalVideo) {
+  try {
+    let localStream = await navigator.mediaDevices.getUserMedia(videoConstrains);
+    this.setState({
+      localStream,
+    });
+    this.setLocalStream();
+  } catch (error) {
+    errorHandler(error);
+  }
+}
+
+function errorHandler (e) {
+  alert(e);
+  console.error(e);
 }
 
 class AppC extends Component {
-
-  // * event handlers
-  errorHandler = e => {
-    alert(e);
-    console.error(e);
-  }
 
   setLocalStream = _ => {
     this.localVideoRef.current.srcObject = this.state.localStream;
@@ -39,30 +74,6 @@ class AppC extends Component {
 
   setRemoteStream = _ => {
     this.remoteVideoRef.current.srcObject = this.state.remoteStream;
-  }
-
-  // * helpers
-
-  startServerConnection = _ => {
-    const socket = new SignalConnection('ws://localhost:8000/');
-
-    socket.on('list', ({ list }) => {
-      this.props.dispatch(uiActions.SET_USER_LIST(list));
-    });
-
-    socket.on('calling', ({ from }) => {
-      this.props.dispatch(connectionActions.SET_FROM(from));
-    });
-
-    socket.on('id', ({ id }) => {
-      this.props.dispatch(connectionActions.SET_ID(id));
-    });
-
-    socket.on('signal', data => {
-      this.props.videoCall.signal(data);
-    });
-
-    this.props.dispatch(connectionActions.SET_SERVER(socket));
   }
 
   startPeer = _ => {
@@ -81,23 +92,6 @@ class AppC extends Component {
       this.setRemoteStream();
     });
     this.props.dispatch(connectionActions.SET_VIDEOCALL(call));
-  }
-
-  startLocalVideo = async _ => {
-    if (navigator.mediaDevices.getUserMedia) {
-      try {
-        let localStream = await navigator.mediaDevices.getUserMedia(videoConstrains);
-        this.setState({
-          localStream,
-        });
-        this.setLocalStream();
-      } catch (error) {
-        this.errorHandler(error);
-      }
-    } else {
-      alert ('Switch to Chrome or Firefox!');
-      return Error();
-    }
   }
 
   // * hooks

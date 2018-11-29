@@ -45,6 +45,14 @@ appStore = createStore(
     composeEnhancer(applyMiddleware(thunk)),
     );
 
+// -----
+
+if (!navigator.mediaDevices.getUserMedia) {
+    alert('Switch to chrome/ firefox');
+}
+
+// -----
+
 ReactDOM.render(
     <Provider store={appStore}>
         <App />
