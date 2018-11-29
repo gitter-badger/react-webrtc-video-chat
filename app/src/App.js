@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useRef } from 'react';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
 
@@ -21,16 +21,11 @@ function App (props) {
   const [localStream, setLocalStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
 
-
+  const localVideoRef = useRef();
+  const remoteVideoRef = useRef();
 }
 
 class AppC extends Component {
-
-  constructor (props) {
-    super (props);
-    this.localVideoRef = React.createRef();
-    this.remoteVideoRef = React.createRef();
-  }
 
   // * event handlers
   errorHandler = e => {
