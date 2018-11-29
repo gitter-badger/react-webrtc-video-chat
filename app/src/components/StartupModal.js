@@ -1,49 +1,36 @@
-import React, { Component } from 'react';
+import React, { useRef, useEffect } from 'react';
+import { useInput } from '../util/hooks';
+
 import { Modal, Input, Form, Button } from 'semantic-ui-react';
 
 import connectionActions from '../actions/connectionActions.js';
 import { connect } from 'react-redux';
 
-class StartupModal extends Component {
-    state = {
-        name: '',
+function StartupModal (props) {
+    const name = useInput();
+    const nameInputRef = useRef();
+
+    useEffect(_ => nameInputRef.current.focus());
+
+    const handleSubmitButton = _ => {
+        if (name.value !== '')
+            props.setName(name);
     }
 
-    constructor (props) {
-        super(props);
-        this.nameInputRef = React.createRef ();
-    }
-
-    componentDidMount = _ => {
-        // focus the textbox
-        this.nameInputRef.current.focus ();
-    }
-
-    handleNameInputChange = e => {
-        this.setState ({
-            name: e.target.value
-        });
-    }
-
-    handleSubmitButton = _ => {
-        if (this.state.name !== '')
-            this.props.setName(this.state.name);
-    }
-
-    render = () => (
+    return (
         <Modal open className='animated bounceIn'>
             <Modal.Header>Enter a username!</Modal.Header>
             <Modal.Content>
                 <Form>
                     <Form.Field>
                         <label>Name</label>
-                        <Input ref={this.nameInputRef} onChange={this.handleNameInputChange} />
+                        <Input ref={nameInputRef} {...name} />
                     </Form.Field>
-                    <Button type='submit' onClick={this.handleSubmitButton} color={this.state.name ? 'blue' : 'grey'}>Join room!</Button>
+                    <Button type='submit' onClick={handleSubmitButton} color={name.value ? 'blue' : 'grey'}>Join room!</Button>
                 </Form>
             </Modal.Content>
         </Modal>
-    )
+    );
 }
 
 const mapStateToProps = store => ({
