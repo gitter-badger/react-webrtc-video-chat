@@ -17,9 +17,11 @@ import { videoConstrains } from './util/config';
 import SignalConnection from './util/SignalConnection';
 import VideoCall from './util/VideoCall';
 
-// -----
+function App () {
 
-class App extends Component {
+}
+
+class AppC extends Component {
 
   state = {
     localStream: undefined,
