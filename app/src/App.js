@@ -26,41 +26,112 @@ function App (props) {
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
 
+  // Starts a peer connection.
+  function startPeer() {
+    let params = {
+      serverConnection: props.serverConnection, 
+      remote: props.to || props.from, 
+      type: props.to ? VideoCall.CALLER : VideoCall.RECEIVER,
+      stream: localStream,
+    }
+  
+    const call = new VideoCall(params);
+    call.on('track', track => {
+      setRemoteStream(call.remoteStream);
+    });
+    props.dispatch(connectionActions.SET_VIDEOCALL(call));
+  }
+
   // Stream setting effect.
   useEffect(_ => {
     if (localStream)
       localVideoRef.current.srcObject = localStream;
     if (remoteStream)
       remoteVideoRef.current.srcObject = remoteStream;
-  }, [localStream, remoteStream]);
+  }, [!!localStream, !!remoteStream]);
 
-  // Start server connection.
+  // Start peer connection.
   useEffect(_ => {
-    startServerConnection(props.dispatch);
-  }, [props.serverConnection]);
-
-}
-
-function startServerConnection (dispatch) {
-  const socket = new SignalConnection('ws://localhost:8000/');
-
-  socket.on('list', ({ list }) => {
-    dispatch(uiActions.SET_USER_LIST(list));
+    if (props.to || props.from) {
+      if (!props.videoCall) {
+        startPeer();
+      }
+    }
   });
 
-  socket.on('calling', ({ from }) => {
-    dispatch(connectionActions.SET_FROM(from));
-  });
+  // Starts a server connection.
+  function startServerConnection () {
+    const socket = new SignalConnection('ws://localhost:8000/');
+  
+    socket.on('list', ({ list }) => {
+      props.dispatch(uiActions.SET_USER_LIST(list));
+    });
+  
+    socket.on('calling', ({ from }) => {
+      props.dispatch(connectionActions.SET_FROM(from));
+    });
+  
+    socket.on('id', ({ id }) => {
+      props.dispatch(connectionActions.SET_ID(id));
+    });
+  
+    socket.on('signal', data => {
+      props.videoCall.signal(data);
+    });
+  
+    props.dispatch(connectionActions.SET_SERVER(socket));
+  }
 
-  socket.on('id', ({ id }) => {
-    dispatch(connectionActions.SET_ID(id));
-  });
+  if(!props.serverConnection)
+    startServerConnection();
+  
+  return (
+    <div className="App">
+      <Navbar />
+      <If condition={!props.name}>
+        <StartupModal />
+      </If>
+      
+      <div className="AppContent">
+        <If condition={props.isUserListOpen}>
+          <UserSelector disabled={!localStream} />
+        </If>
+        <Grid columns="2" divided stackable>
+          
+          <Grid.Row>
+            <Grid.Column width={3}>
+              <Header as="h2" icon textAlign="center">
+                <Icon name='wifi' circular />
+                <Header.Content>Them</Header.Content>
+              </Header>
+            </Grid.Column>
+            <Grid.Column width={9} textAlign='center'>
+              <If condition={!props.videoCall}>
+                <PlaceholderVideo />
+              </If>
+              <video ref={remoteVideoRef} autoPlay id="remoteVideo" hidden={!remoteStream} />
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={3}>
+              <Header as="h2" icon textAlign="center">
+                <Icon name='user' circular />
+                <Header.Content>You</Header.Content>
+              </Header>
+            </Grid.Column>
+            <Grid.Column width={9}>
+              <If condition={!localStream}>
+                <PlaceholderVideo />
+              </If>
+              <video ref={localVideoRef} autoPlay muted id="localVideo" hidden={!localStream} />
+            </Grid.Column>
+          </Grid.Row>
+          
+        </Grid>
+      </div>
+    </div>
+  );
 
-  socket.on('signal', data => {
-    videoCall.signal(data);
-  });
-
-  dispatch(connectionActions.SET_SERVER(socket));
 }
 
 async function useLocalStream (setLocalStream) {
@@ -75,93 +146,6 @@ async function useLocalStream (setLocalStream) {
 function errorHandler (e) {
   alert(e);
   console.error(e);
-}
-
-class AppC {
-
-  startPeer = _ => {
-    let params = {
-      serverConnection: this.props.serverConnection, 
-      remote: this.props.to || this.props.from, 
-      type: this.props.to ? VideoCall.CALLER : VideoCall.RECEIVER,
-      stream: this.state.localStream,
-    }
-
-    const call = new VideoCall(params);
-    call.on('track', track => {
-      this.setState({
-        remoteStream: call.remoteStream
-      });
-      this.setRemoteStream();
-    });
-    this.props.dispatch(connectionActions.SET_VIDEOCALL(call));
-  }
-
-  // * hooks
-
-  componentDidMount = _ => {
-    this.startServerConnection();
-  }
-
-  componentDidUpdate = _ => {
-    if (this.props.to || this.props.from) {
-      if (!this.props.videoCall)
-        this.startPeer();
-    }
-  };
-
-  // * main component
-  render = () => {
-    return (
-      <div className="App">
-        <Navbar />
-
-        <If condition={!this.props.name}>
-          <StartupModal />
-        </If>
-        
-        <div className="AppContent">
-          <If condition={this.props.isUserListOpen}>
-            <UserSelector disabled={!this.state.localStream} />
-          </If>
-
-          <Grid columns="2" divided stackable>
-            
-            <Grid.Row>
-              <Grid.Column width={3}>
-                <Header as="h2" icon textAlign="center">
-                  <Icon name='wifi' circular />
-                  <Header.Content>Them</Header.Content>
-                </Header>
-              </Grid.Column>
-              <Grid.Column width={9} textAlign='center'>
-                <If condition={!this.props.videoCall}>
-                  <PlaceholderVideo />
-                </If>
-                <video ref={this.remoteVideoRef} autoPlay id="remoteVideo" hidden={!this.state.remoteStream} />
-              </Grid.Column>
-            </Grid.Row>
-
-            <Grid.Row>
-              <Grid.Column width={3}>
-                <Header as="h2" icon textAlign="center">
-                  <Icon name='user' circular />
-                  <Header.Content>You</Header.Content>
-                </Header>
-              </Grid.Column>
-              <Grid.Column width={9}>
-                <If condition={!this.state.localStream}>
-                  <PlaceholderVideo />
-                </If>
-                <video ref={this.localVideoRef} autoPlay muted id="localVideo" hidden={!this.state.localStream} />
-              </Grid.Column>
-            </Grid.Row>
-            
-          </Grid>
-        </div>
-      </div>
-    );
-  }
 }
 
 // -----
