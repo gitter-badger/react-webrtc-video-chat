@@ -2,9 +2,9 @@ import { EventEmitter } from "events";
 import _ from 'lodash';
 
 export default class SignalConnection extends EventEmitter {
-    constructor () {
+    constructor (endpoint='') {
         super();
-        this.ws = new WebSocket ('wss://shakal-io-signal.herokuapp.com/');
+        this.ws = new WebSocket (endpoint);
 
         this.ws.onmessage = message => {
             let messageJson = JSON.parse(message.data);
