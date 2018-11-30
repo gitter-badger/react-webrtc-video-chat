@@ -1,4 +1,4 @@
-import React, { Component, useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
 
@@ -19,15 +19,25 @@ import VideoCall from './util/VideoCall';
 
 function App (props) {
   const [remoteStream, setRemoteStream] = useState(null);
-  const localStream = useLocalStream();
+  const [localStream, setLocalStream] = useState(null);
+
+  useLocalStream(setLocalStream);
 
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
 
+  // Stream setting effect.
   useEffect(_ => {
     if (localStream)
       localVideoRef.current.srcObject = localStream;
-  }, [localStream]);
+    if (remoteStream)
+      remoteVideoRef.current.srcObject = remoteStream;
+  }, [localStream, remoteStream]);
+
+  // Start server connection.
+  useEffect(_ => {
+    startServerConnection(props.dispatch);
+  }, [props.serverConnection]);
 
 }
 
@@ -53,13 +63,10 @@ function startServerConnection (dispatch) {
   dispatch(connectionActions.SET_SERVER(socket));
 }
 
-async function useLocalStream () {
-  const [localStream, setLocalStream] = useState(null);
+async function useLocalStream (setLocalStream) {
   try {
     let ls = await navigator.mediaDevices.getUserMedia(videoConstrains);
     setLocalStream(ls);
-
-    return localStream;
   } catch (error) {
     errorHandler(error);
   }
@@ -70,11 +77,7 @@ function errorHandler (e) {
   console.error(e);
 }
 
-class AppC extends Component {
-
-  setRemoteStream = _ => {
-    this.remoteVideoRef.current.srcObject = this.state.remoteStream;
-  }
+class AppC {
 
   startPeer = _ => {
     let params = {
@@ -98,7 +101,6 @@ class AppC extends Component {
 
   componentDidMount = _ => {
     this.startServerConnection();
-    this.startLocalVideo();
   }
 
   componentDidUpdate = _ => {
