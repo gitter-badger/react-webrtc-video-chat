@@ -1,0 +1,7 @@
+{
+  "name": "Shakal.io Signaling Server",
+  "description": "WebRTC signaling server for Shakal.io",
+  "repository": "https://github.com/vixrant/shakal-io",
+  "logo": "https://imgur.com/J29ybEO.png",
+  "keywords": ["webrtc", "node", "video", "p2p", "conference", "signal", "websocket", "ws"]
+}
