@@ -6,12 +6,11 @@
 ### Technology stack
 1. React for web app.
 2. NodeJS for http and ws signalling server.
-3. Github Pages hosting.
 
 ### Easy Deploy
 
 #### React App
-[![Deploy Frontend to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/netlify/netlify-statuskit)
+[![Deploy Frontend to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/vixrant/shakal-io)
 
 #### Signaling Server
 [![Deploy Backend to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/vixrant/shakal-io)
