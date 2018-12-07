@@ -1,1 +1,1 @@
-web: cd server/ ; yarn; node index.js
+web: cd server/ && yarn install && yarn start
