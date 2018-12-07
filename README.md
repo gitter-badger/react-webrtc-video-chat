@@ -9,10 +9,11 @@
 
 ### Easy Deploy
 
-| React App | Signaling Server |
-| --------- | ---------------- |
-| [![Deploy Frontend to Netlify][Netlify-deploy-button]][Netlify-deploy-link] | [![Deploy Backend to Heroku][Heroku-deploy-button]][Heroku-deploy-link] |
+#### React App
+[![Deploy Frontend to Netlify][Netlify-deploy-button]][Netlify-deploy-link]
 
+#### Signaling Server
+[![Deploy Backend to Heroku][Heroku-deploy-button]][Heroku-deploy-link]
 
 ### License
 
