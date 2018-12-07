@@ -9,11 +9,9 @@
 
 ### Easy Deploy
 
-#### React App
-[![Deploy Frontend to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/vixrant/shakal-io)
-
-#### Signaling Server
-[![Deploy Backend to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/vixrant/shakal-io)
+| React App | Signaling Server |
+| --------- | ---------------- |
+| [![Deploy Frontend to Netlify][Netlify-deploy-button]][Netlify-deploy-link] | [![Deploy Backend to Heroku][Heroku-deploy-button]][Heroku-deploy-link] |
 
 
 ### License
@@ -32,3 +30,8 @@ Copyright (C) 2018 Vikrant Gajria
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+[Netlify-deploy-link]: https://app.netlify.com/start/deploy?repository=https://github.com/vixrant/shakal-io
+[Netlify-deploy-button]: https://www.netlify.com/img/deploy/button.svg
+[Heroku-deploy-button]: https://www.herokucdn.com/deploy/button.svg
+[Heroku-deploy-link]: https://heroku.com/deploy?template=https://github.com/vixrant/shakal-io
