@@ -1,0 +1,8 @@
+[Settings]
+
+ID = 'shakal-io'
+
+[build]
+    base = 'app/'
+    publish = 'app/build'
+    command = 'yarn build'
