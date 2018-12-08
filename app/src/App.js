@@ -14,14 +14,13 @@ import UserSelector from './components/UserSelector';
 import PlaceholderVideo from './components/PlaceholderVideo';
 
 import { videoConstrains } from './util/config';
+import { useUserMedia } from './util/hooks';
 import SignalConnection from './util/SignalConnection';
 import VideoCall from './util/VideoCall';
 
 function App (props) {
   const [remoteStream, setRemoteStream] = useState(null);
-  const [localStream, setLocalStream] = useState(null);
-
-  useLocalStream(setLocalStream);
+  const localStream = useUserMedia(videoConstrains);
 
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
@@ -132,20 +131,6 @@ function App (props) {
     </div>
   );
 
-}
-
-async function useLocalStream (setLocalStream) {
-  try {
-    let ls = await navigator.mediaDevices.getUserMedia(videoConstrains);
-    setLocalStream(ls);
-  } catch (error) {
-    errorHandler(error);
-  }
-}
-
-function errorHandler (e) {
-  alert(e);
-  console.error(e);
 }
 
 // -----
