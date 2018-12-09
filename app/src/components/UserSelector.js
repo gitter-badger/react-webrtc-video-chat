@@ -14,7 +14,7 @@ const mapState = store => ({
     to: store.connection.to,
 });
 
-export default function UserSelector() {
+export default function UserSelector({ disabled }) {
     const { userId, onlineUsersList, serverConnection, to } = useMappedState(mapState);
     const dispatch = useDispatch();
 
