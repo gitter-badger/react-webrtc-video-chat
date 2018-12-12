@@ -38,22 +38,6 @@ export default function App (props) {
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
 
-  // Starts a peer connection.
-  function startPeer() {
-    let params = {
-      serverConnection: serverConnection, 
-      remote: to || from, 
-      type: to ? VideoCall.CALLER : VideoCall.RECEIVER,
-      stream: localStream,
-    }
-  
-    const call = new VideoCall(params);
-    call.on('track', track => {
-      setRemoteStream(call.remoteStream);
-    });
-    dispatch(connectionActions.SET_VIDEOCALL(call));
-  }
-
   // Stream setting effect.
   useEffect(_ => {
     if (localStream)
@@ -66,13 +50,23 @@ export default function App (props) {
   useEffect(_ => {
     if (to || from) {
       if (!videoCall) {
-        startPeer();
+        let params = {
+          serverConnection: serverConnection, 
+          remote: to || from, 
+          type: to ? VideoCall.CALLER : VideoCall.RECEIVER,
+          stream: localStream,
+        }
+      
+        const call = new VideoCall(params);
+        call.on('track', track => {
+          setRemoteStream(call.remoteStream);
+        });
+        dispatch(connectionActions.SET_VIDEOCALL(call));
       }
     }
   });
 
-  // Starts a server connection.
-  function startServerConnection () {
+  if(!serverConnection) {
     const socket = new SignalConnection('ws://localhost:8000/');
   
     socket.on('list', ({ list }) => {
@@ -93,9 +87,6 @@ export default function App (props) {
   
     dispatch(connectionActions.SET_SERVER(socket));
   }
-
-  if(!serverConnection)
-    startServerConnection();
   
   return (
     <div className="App">
