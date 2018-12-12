@@ -5,7 +5,7 @@ class VideoCall extends EventTarget {
     static CALLER = 'caller';
     static RECEIVER = 'receiver';
 
-    constructor(params, peerconfig=peerConnectionConfig) {
+    constructor(params, connection, peerconfig=peerConnectionConfig) {
         super();
         const peer = new RTCPeerConnection(peerconfig);
         peer.onicecandidate = this.onIceCandidate;

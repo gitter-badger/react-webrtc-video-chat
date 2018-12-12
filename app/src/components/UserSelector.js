@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Card, List } from 'semantic-ui-react';
 
@@ -7,15 +7,12 @@ import connectionActions from '../actions/connectionActions';
 
 const mapState = store => ({
     userId: store.connection.id,
-
-    onlineUsersList: store.ui.onlineUsersList,
     serverConnection: store.connection.serverConnection,
-
     to: store.connection.to,
 });
 
-export default function UserSelector({ disabled }) {
-    const { userId, onlineUsersList, serverConnection, to } = useMappedState(mapState);
+export default function UserSelector({ list, disabled }) {
+    const { userId, serverConnection, to } = useMappedState(mapState);
     const dispatch = useDispatch();
 
     let handleItemClick = (e, data) => {
@@ -35,10 +32,12 @@ export default function UserSelector({ disabled }) {
             disabled={to === e.id}
             > 
             {e.name ? e.name : e.id} 
-        </List.Item>)
-    let items = onlineUsersList
+        </List.Item>);
+    
+    let items = list
                 .filter(e => e.id !== userId)
                 .map(toListItem);
+    console.log(JSON.stringify(items))
 
     return (
         <Card fluid raised className='animated bounceInDown'>

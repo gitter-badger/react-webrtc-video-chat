@@ -3,8 +3,9 @@ import { useUserMedia } from './util/hooks';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
 
-import { Grid, Header, Icon } from 'semantic-ui-react';
 import { If } from 'react-extras';
+import LocalVideo from './components/LocalVideo';
+import RemoteVideo from './components/RemoteVideo';
 import Navbar from './components/Navbar';
 import StartupModal from './components/StartupModal';
 import UserSelector from './components/UserSelector';
@@ -14,7 +15,6 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 import connectionActions from './actions/connectionActions';
 import uiActions from './actions/uiActions';
 
-import { videoConstrains } from './util/config';
 import SignalConnection from './util/SignalConnection';
 import VideoCall from './util/VideoCall';
 
@@ -28,12 +28,13 @@ const mapState = store => ({
   from: store.connection.from,
 });
 
-export default function App (props) {
+export default function App () {
   const { isUserListOpen, serverConnection, videoCall, name, to, from } = useMappedState(mapState);
   const dispatch = useDispatch();
 
   const [remoteStream, setRemoteStream] = useState(null);
   const localStream = useUserMedia(videoConstrains);
+  const [usersList, setUsersList] = useState([]);
 
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
@@ -64,12 +65,13 @@ export default function App (props) {
         dispatch(connectionActions.SET_VIDEOCALL(call));
       }
     }
-  });
+  }, [!!to, !!from, !!videoCall]);
 
   if(!serverConnection) {
     const socket = new SignalConnection('ws://localhost:8000/');
   
     socket.on('list', ({ list }) => {
+      setUsersList(list);
       dispatch(uiActions.SET_USER_LIST(list));
     });
   
@@ -96,40 +98,11 @@ export default function App (props) {
       </If>
       
       <div className="AppContent">
-        <If condition={isUserListOpen}>
-          <UserSelector disabled={!localStream} />
-        </If>
+        <UserSelector open={isUserListOpen} list={usersList} disabled={!localStream} />
+
         <Grid columns="2" divided stackable>
-          
-          <Grid.Row>
-            <Grid.Column width={3}>
-              <Header as="h2" icon textAlign="center">
-                <Icon name='wifi' circular />
-                <Header.Content>Them</Header.Content>
-              </Header>
-            </Grid.Column>
-            <Grid.Column width={9} textAlign='center'>
-              <If condition={!videoCall}>
-                <PlaceholderVideo />
-              </If>
-              <video ref={remoteVideoRef} autoPlay id="remoteVideo" hidden={!remoteStream} />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column width={3}>
-              <Header as="h2" icon textAlign="center">
-                <Icon name='user' circular />
-                <Header.Content>You</Header.Content>
-              </Header>
-            </Grid.Column>
-            <Grid.Column width={9}>
-              <If condition={!localStream}>
-                <PlaceholderVideo />
-              </If>
-              <video ref={localVideoRef} autoPlay muted id="localVideo" hidden={!localStream} />
-            </Grid.Column>
-          </Grid.Row>
-          
+          <LocalVideo />
+          <RemoteVideo />
         </Grid>
       </div>
     </div>
