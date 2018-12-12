@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function useInput(initvalue='') {
     const [value, setValue] = useState(initvalue);
@@ -11,16 +11,14 @@ export function useInput(initvalue='') {
     }
 }
 
-export function useUserMedia(constraints, errorCallback=(()=>undefined)) {
-    const [stream, setStream] = useState(null);
+export function useUserMedia(constraints, errorCallback=(_=>undefined)) {
+    const [stream, setStream] = useState();
 
-    const getUserMedia = navigator.mediaDevices.getUserMedia;
-    if (!getUserMedia) return new Error('MediaStream not supported.');
-
-    getUserMedia(constraints)
-        .then(setStream)
-        .catch(errorCallback);
+    useEffect(_ => {
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(setStream)
+            .catch(errorCallback)
+    }, [stream]);
 
     return stream;
 }
-
