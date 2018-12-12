@@ -1,5 +1,4 @@
 import { EventEmitter } from "events";
-import _ from 'lodash';
 
 export default class SignalConnection extends EventEmitter {
     constructor (endpoint='') {
