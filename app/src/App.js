@@ -45,10 +45,9 @@ export default function App () {
     }
   }, [to, videoCall.remote]);
 
-  console.log('render');
-
   // Setup
   signal.on('list', ({ list }) => {
+    console.log(JSON.stringify(list));
     dispatch(uiActions.SET_USER_LIST(list));
   });
   
