@@ -5,7 +5,7 @@ import { useEffect } from "react";
 export default function useSignalConnection(endpoint='') {
     const emitter = new EventEmitter();
 
-    useEffect(_ => {
+    useEffect(() => {
         const ws = new WebSocket(endpoint);
 
         ws.onmessage = message => {

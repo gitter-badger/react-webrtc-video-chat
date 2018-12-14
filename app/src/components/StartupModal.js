@@ -7,20 +7,20 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 import connectionActions from '../actions/connectionActions.js';
 
 const mapState = store => ({
-    serverConnection: store.connection.serverConnection,
+    signal: store.connection.signal,
 });
 
 export default function StartupModal () {
     const name = useInput();
     const nameInputRef = useRef();
     const dispatch = useDispatch();
-    const { serverConnection } = useMappedState(mapState);
+    const { signal } = useMappedState(mapState);
 
     useEffect(_ => nameInputRef.current.focus());
 
     const handleSubmitButton = _ => {
         if (name.value !== '') {
-            serverConnection.send({
+            signal.send({
                 type: 'name',
                 name,
             });
@@ -40,7 +40,7 @@ export default function StartupModal () {
                     <Button 
                     type='submit' 
                     onClick={handleSubmitButton} 
-                    color={name.value && serverConnection ? 'blue' : 'grey'}>
+                    color={name.value && signal ? 'blue' : 'grey'}>
                         Join room!
                     </Button>
                 </Form>

@@ -28,4 +28,11 @@ export default {
         },
     }),
 
+    SET_SIGNAL_CONNECTION: signal => ({
+        type: 'SET_SIGNAL_CONNECTION',
+        payload: {
+            signal
+        }
+    }),
+
 };

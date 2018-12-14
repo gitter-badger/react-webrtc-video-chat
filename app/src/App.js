@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import useSignalConnection from './util/useSignalConnection';
 import useVideoCall from './util/useVideoCall';
 import './App.css';
@@ -29,6 +29,12 @@ export default function App () {
   const videoCall = useVideoCall({
     signal,
   });
+
+  useEffect(_ => {
+    if(signal) {
+      dispatch(connectionActions.SET_SIGNAL_CONNECTION(signal));
+    }
+  }, []);
 
   // Start peer connection.
   useEffect(_ => {

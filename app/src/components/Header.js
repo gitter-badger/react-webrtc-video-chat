@@ -1,5 +1,4 @@
 import React from 'react';
-import { useMappedState } from 'redux-react-hook';
 
 import Navbar from './Navbar';
 import UserSelector from './UserSelector';
