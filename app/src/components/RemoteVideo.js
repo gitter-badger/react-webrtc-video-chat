@@ -1,32 +1,33 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useRef } from "react";
 
-import { Grid, Header, Icon } from 'semantic-ui-react';
+import { If } from "react-extras";
+import { Grid, Header, Icon } from "semantic-ui-react";
+import PlaceholderVideo from "./PlaceholderVideo";
 
 export default function RemoteVideo({ stream }) {
-    useLayoutEffect(() => {
-        this.video.srcObject = stream;
-    }, [stream]);
+  const videoref = useRef();
 
-    return (
-      <Grid.Row>
-        <Grid.Column width={3}>
-          <Header as="h2" icon textAlign="center">
-            <Icon name="user" circular />
-            <Header.Content>You</Header.Content>
-          </Header>
-        </Grid.Column>
-        <Grid.Column width={9}>
-          <If condition={!stream}>
-            <PlaceholderVideo />
-          </If>
-          <video
-            ref={video => this.video = video}
-            autoPlay
-            muted
-            id="localVideo"
-            hidden={!stream}
-          />
-        </Grid.Column>
-      </Grid.Row>
-    );
+  useLayoutEffect(
+    () => {
+      videoref.current.srcObject = stream;
+    },
+    [stream]
+  );
+
+  return (
+    <Grid.Row>
+      <Grid.Column width={3}>
+        <Header as="h2" icon textAlign="center">
+          <Icon name="user" circular />
+          <Header.Content>You</Header.Content>
+        </Header>
+      </Grid.Column>
+      <Grid.Column width={9}>
+        <If condition={!stream}>
+          <PlaceholderVideo />
+        </If>
+        <video ref={videoref} autoPlay id="localVideo" hidden={!stream} />
+      </Grid.Column>
+    </Grid.Row>
+  );
 }

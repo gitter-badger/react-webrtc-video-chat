@@ -28,18 +28,4 @@ export default {
         },
     }),
 
-    SET_SERVER: serverConnection => ({
-        type: 'SET_SERVER',
-        payload: {
-            serverConnection
-        },
-    }),
-
-    SET_VIDEOCALL: videoCall => ({
-        type: 'SET_VIDEOCALL',
-        payload: {
-            videoCall
-        },
-    }),
-
 };

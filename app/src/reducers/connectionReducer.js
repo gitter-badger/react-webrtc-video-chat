@@ -2,12 +2,8 @@ const initialState = {
     name: undefined,
     id: undefined,
 
-    serverConnection: undefined,
-
     to: undefined,
     from: undefined,
-
-    videoCall: undefined,
 };
 
 function connectionReducer (state=initialState, action) {
@@ -15,8 +11,6 @@ function connectionReducer (state=initialState, action) {
 
         case 'SET_NAME':
         case 'SET_ID':
-        case 'SET_SERVER':
-        case 'SET_VIDEOCALL':
         case 'SET_TO':
         case 'SET_FROM':
             return {

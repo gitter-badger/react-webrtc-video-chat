@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Card, List } from 'semantic-ui-react';
 
@@ -9,13 +9,15 @@ const mapState = store => ({
     userId: store.connection.id,
     serverConnection: store.connection.serverConnection,
     to: store.connection.to,
+    isOpen: store.ui.isUserListOpen,
+    usersList: store.ui.onlineUsersList,
 });
 
-export default function UserSelector({ list, disabled }) {
-    const { userId, serverConnection, to } = useMappedState(mapState);
+export default function UserSelector({ disabled }) {
+    const { userId, serverConnection, to, isOpen, usersList } = useMappedState(mapState);
     const dispatch = useDispatch();
 
-    let handleItemClick = (e, data) => {
+    const handleItemClick = (e, data) => {
         const to = data.uuid;
         serverConnection.send({
             type: 'call',
@@ -34,13 +36,13 @@ export default function UserSelector({ list, disabled }) {
             {e.name ? e.name : e.id} 
         </List.Item>);
     
-    let items = list
+    let items = usersList
                 .filter(e => e.id !== userId)
                 .map(toListItem);
     console.log(JSON.stringify(items))
 
     return (
-        <Card fluid raised className='animated bounceInDown'>
+        <Card hidden={isOpen} fluid raised className='animated bounceInDown'>
             <Card.Content>
                 <Card.Header>Select User to Call</Card.Header>
             </Card.Content>

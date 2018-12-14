@@ -6,13 +6,13 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 import uiActions from '../actions/uiActions';
 
 const mapState = store => ({
-    isOnlineListOpen: store.ui.openUsersList,
     isDebugDialogOpen: store.ui.openDebugDialog,
+    isUserListOpen: store.ui.openUsersList,
 });
 
 export default function Navbar() {
     const dispatch = useDispatch();
-    const { isOnlineListOpen, isDebugDialogOpen } = useMappedState(mapState);
+    const { isUserListOpen, isDebugDialogOpen } = useMappedState(mapState);
 
     return (
         <Sticky>
@@ -26,7 +26,7 @@ export default function Navbar() {
                     icon='users'
                     name='Online Users'
                     onClick={_ => dispatch(uiActions.TOGGLE_USER_LIST())}
-                    active={isOnlineListOpen}
+                    active={isUserListOpen}
                 />
     
                 <Menu.Item

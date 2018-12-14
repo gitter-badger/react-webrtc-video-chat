@@ -18,7 +18,7 @@ export function useUserMedia(constraints, errorCallback=(_=>undefined)) {
         navigator.mediaDevices.getUserMedia(constraints)
             .then(setStream)
             .catch(errorCallback)
-    });
+    }, []);
 
     return stream;
 }
