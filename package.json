@@ -9,6 +9,7 @@
   "dependencies": {
     "lodash": "^4.17.11",
     "uuid": "^3.3.2",
+    "winston": "^3.1.0",
     "ws": "^6.1.0"
   },
   "devDependencies": {
@@ -20,4 +21,3 @@
     "dev": "nodemon server/index.js"
   }
 }
-
