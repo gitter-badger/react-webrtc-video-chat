@@ -6,7 +6,8 @@ import 'semantic-ui-css/semantic.min.css';
 
 import { If } from 'react-extras';
 import { Grid } from 'semantic-ui-react';
-import Header from './components/Header';
+import Navbar from './components/Navbar';
+import UserSelector from './components/UserSelector';
 import LocalVideo from './components/LocalVideo';
 import RemoteVideo from './components/RemoteVideo';
 import StartupModal from './components/StartupModal';
@@ -18,11 +19,10 @@ import uiActions from './actions/uiActions';
 const mapState = store => ({
   name: store.connection.name,
   to: store.connection.to,
-  from: store.connection.from,
 });
 
 export default function App () {
-  const { name, to, from } = useMappedState(mapState);
+  const { name, to } = useMappedState(mapState);
   const dispatch = useDispatch();
 
   const signal = useSignalConnection('ws://localhost:8000/');
@@ -68,8 +68,10 @@ export default function App () {
         <StartupModal />
       </If>
       
+      <Navbar />
+
       <div className="AppContent">
-        <Header />
+        <UserSelector />
         <Grid columns="2" divided stackable>
           <LocalVideo stream={videoCall.localStream} />
           <RemoteVideo stream={videoCall.remoteStream} />
