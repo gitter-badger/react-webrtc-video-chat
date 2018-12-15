@@ -22,7 +22,7 @@ export default function StartupModal () {
         if (name.value !== '') {
             signal.send({
                 type: 'name',
-                name,
+                name: name.value,
             });
             dispatch(connectionActions.SET_NAME(name));
         }

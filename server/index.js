@@ -80,7 +80,8 @@ const ws = new WebSocket({
 
 ws.broadcast = data => {
     ws.clients.forEach(client => {
-        client.send(data);
+        if (client.readyState === 1)
+            client.send(data);
     });
 };
 

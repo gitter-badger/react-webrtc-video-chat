@@ -32,13 +32,13 @@ export default function UserSelector({ disabled }) {
             key={i++}
             uuid={e.id}
             disabled={to === e.id}
-            > 
-            {e.name ? e.name : e.id} 
+        > 
+            {e.name || e.id}
         </List.Item>);
-    
+
     let items = usersList
-                .filter(e => e.id !== userId)
-                .map(toListItem);
+        .filter(e => e.id !== userId)
+        .map(toListItem);
     items.forEach(console.log);
 
     return (
