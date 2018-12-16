@@ -14,7 +14,7 @@ const mapState = store => ({
 });
 
 export default function UserSelector({ disabled }) {
-    const { userId, signal, to, isOpen, usersList } = useMappedState(mapState);
+    const { userId, to, isOpen, usersList } = useMappedState(mapState);
     const dispatch = useDispatch();
 
     const handleItemClick = (e, data) => {

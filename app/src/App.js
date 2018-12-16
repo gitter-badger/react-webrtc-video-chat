@@ -21,7 +21,7 @@ const mapState = store => ({
   to: store.connection.to,
 });
 
-export default function App () {
+export default function App() {
   const { name, to } = useMappedState(mapState);
   const dispatch = useDispatch();
 
@@ -34,7 +34,7 @@ export default function App () {
     if(signal) {
       dispatch(connectionActions.SET_SIGNAL_CONNECTION(signal));
     }
-  }, []);
+  }, [signal]);
 
   // Start peer connection.
   useEffect(_ => {
