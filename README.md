@@ -1,5 +1,15 @@
-# Shakal.io 🎭
-## Peer-to-Peer video chat using WebRTC
+<br>
+<br>
+
+<p>
+    <h1 align='center'> 🎭 Shakal.io </h1>
+    <h6 align='center'> Peer-to-Peer video chat using WebRTC </h6>
+</p>
+
+<br>
+<br>
+<br>
+<br>
 
 > *NOTE:* If you're running this program either on the website shakal-io.netlify.com or on your `localhost`, do note that without a TURN relay server, this program will only work on your local network! Due to how symmetric NATs work, it is impossible as of now to set up a true peer-to-peer connection over the internet.
 
