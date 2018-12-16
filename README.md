@@ -1,4 +1,3 @@
-<br>
 <p>
     <h1 align='center'> 🎭 Shakal.io </h1>
     <h6 align='center'> Peer-to-Peer video chat using WebRTC </h6>
