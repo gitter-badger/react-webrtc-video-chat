@@ -1,16 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useUserMedia } from './hooks';
-
-import { videoConstrains } from './config';
 import { peerConnectionConfig } from './config';
 
 export default function useVideoCall (params, peerConfig=peerConnectionConfig) {
     const [tracks, setTracks] = useState([]);
-    const localStream = useUserMedia(videoConstrains);
     const [remote, setRemote] = useState();
-  
-    const signal = params.signal;
     const peer = useMemo(() => new RTCPeerConnection(peerConfig), [peerConfig]);
+
+    const { localStream, signal } = params;
     
     useEffect(_ => {
         // Send tracks
