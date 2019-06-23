@@ -1,10 +1,10 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import useSignalConnection from '../util/useSignalConnection';
 
 import { Card, List } from 'semantic-ui-react';
 
 import _ from 'lodash';
-import connectionActions from '../actions/connectionActions';
 
 const mapState = store => ({
     userId: store.connection.id,
@@ -15,11 +15,11 @@ const mapState = store => ({
 
 export default function UserSelector({ disabled }) {
     const { userId, to, isOpen, usersList } = useSelector(mapState);
-    const dispatch = useDispatch();
+    const { callById } = useSignalConnection();
 
     const handleItemClick = (e, data) => {
         const to = data.uuid;
-        dispatch(connectionActions.CALL_BY_ID(to));
+        callById(to);
     };
 
     const toListItem = (e, i) => (

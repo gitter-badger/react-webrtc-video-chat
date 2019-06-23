@@ -8,6 +8,8 @@ import thunk from 'redux-thunk';
 import connectionReducer from './reducers/connectionReducer';
 import uiReducer from './reducers/uiReducer';
 
+import { createSignalConnection, SignalProvider } from './util/useSignalConnection';
+
 import './index.css';
 import 'animate.css';
 
@@ -45,6 +47,12 @@ appStore = createStore(
     composeEnhancer(applyMiddleware(thunk)),
     );
 
+
+// ----
+
+// Signal connection
+const signalConnection = createSignalConnection(process.env.REACT_APP_SIGNAL_ENDPOINT);
+
 // -----
 
 if (!navigator.mediaDevices.getUserMedia) {
@@ -55,7 +63,9 @@ if (!navigator.mediaDevices.getUserMedia) {
 
 ReactDOM.render(
     <StoreProvider store={appStore}>
-        <App />
+        <SignalProvider connection={signalConnection}>
+            <App />
+        </SignalProvider>
     </StoreProvider>, 
     document.getElementById('root'));
 

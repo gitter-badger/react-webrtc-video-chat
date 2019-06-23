@@ -1,26 +1,23 @@
 import React, { useRef, useEffect } from 'react';
+import { useDispatch, } from 'react-redux';
 import { useInput } from '../util/hooks';
+import useSignalConnection from '../util/useSignalConnection';
 
 import { Modal, Input, Form, Button } from 'semantic-ui-react';
-
-import { useDispatch, useSelector } from 'react-redux';
 import connectionActions from '../actions/connectionActions.js';
 
-const mapState = store => ({
-    signal: store.connection.signal,
-});
 
 export default function StartupModal () {
     const name = useInput();
     const nameInputRef = useRef();
     const dispatch = useDispatch();
-    const { signal } = useSelector(mapState);
+    const { connection } = useSignalConnection();
 
-    useEffect(_ => nameInputRef.current.focus());
+    useEffect(() => nameInputRef.current.focus(), []);
 
     const handleSubmitButton = _ => {
         if (name.value !== '') {
-            signal.send({
+            connection.send({
                 type: 'name',
                 name: name.value,
             });
@@ -39,9 +36,9 @@ export default function StartupModal () {
                     </Form.Field>
                     <Button 
                     type='submit'
-                    disabled={!signal}
+                    disabled={!connection}
                     onClick={handleSubmitButton} 
-                    color={name.value && signal ? 'blue' : 'grey'}>
+                    color={name.value && connection ? 'blue' : 'grey'}>
                         Join room!
                     </Button>
                 </Form>

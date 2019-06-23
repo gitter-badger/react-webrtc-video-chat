@@ -28,23 +28,11 @@ export default {
         },
     }),
 
-    SET_SIGNAL_CONNECTION: signal => ({
-        type: 'SET_SIGNAL_CONNECTION',
-        payload: {
-            signal
-        },
-    }),
-
     SET_VIDEOCALL: videoCall => ({
         type: 'SET_VIDEOCALL',
         payload: {
             videoCall
         },
     }),
-
-    CALL_BY_ID: id => ({
-        type: 'CALL_BY_ID',
-        payload: id,
-    })
 
 };

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import useSignalConnection from './util/useSignalConnection';
 import useVideoCall from './util/useVideoCall';
+import useSignalConnection from './util/useSignalConnection';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css';
 
@@ -25,16 +25,10 @@ export default function App() {
   const { name, to } = useSelector(mapState);
   const dispatch = useDispatch();
 
-  const signal = useSignalConnection(process.env.REACT_APP_SIGNAL_ENDPOINT);
+  const { connection } = useSignalConnection();
   const videoCall = useVideoCall({
-    signal,
+    signal: connection,
   });
-
-  useEffect(_ => {
-    if(signal) {
-      dispatch(connectionActions.SET_SIGNAL_CONNECTION(signal));
-    }
-  }, [signal]);
 
   // Start peer connection.
   useEffect(_ => {
@@ -46,20 +40,20 @@ export default function App() {
   }, [to, videoCall.remote]);
 
   // Setup
-  signal.on('list', ({ list }) => {
+  connection.on('list', ({ list }) => {
     console.log(JSON.stringify(list));
     dispatch(uiActions.SET_USER_LIST(list));
   });
   
-  signal.on('calling', ({ from }) => {
+  connection.on('calling', ({ from }) => {
     dispatch(connectionActions.SET_FROM(from));
   });
   
-  signal.on('id', ({ id }) => {
+  connection.on('id', ({ id }) => {
     dispatch(connectionActions.SET_ID(id));
   });
   
-  signal.on('signal', videoCall.gotSignalMessage);
+  connection.on('signal', videoCall.gotSignalMessage);
 
   // Final application
   return (
