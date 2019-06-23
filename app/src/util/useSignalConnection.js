@@ -18,7 +18,7 @@ export default function useSignalConnection(endpoint='') {
         emitter.send = data => {
             ws.send(JSON.stringify(data));
         };
-    });
+    }, []);
 
     return emitter;
 }

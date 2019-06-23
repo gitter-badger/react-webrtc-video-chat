@@ -12,7 +12,7 @@ import LocalVideo from './components/LocalVideo';
 import RemoteVideo from './components/RemoteVideo';
 import StartupModal from './components/StartupModal';
 
-import { useDispatch, useMappedState } from 'redux-react-hook';
+import { useDispatch, useSelector } from 'react-redux';
 import connectionActions from './actions/connectionActions';
 import uiActions from './actions/uiActions';
 
@@ -22,10 +22,10 @@ const mapState = store => ({
 });
 
 export default function App() {
-  const { name, to } = useMappedState(mapState);
+  const { name, to } = useSelector(mapState);
   const dispatch = useDispatch();
 
-  const signal = useSignalConnection('ws://localhost:8000/');
+  const signal = useSignalConnection(process.env.REACT_APP_SIGNAL_ENDPOINT);
   const videoCall = useVideoCall({
     signal,
   });

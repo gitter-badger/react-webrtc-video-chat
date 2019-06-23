@@ -19,7 +19,7 @@ export default function RemoteVideo({ stream }) {
       <Grid.Column width={3}>
         <Header as="h2" icon textAlign="center">
           <Icon name="user" circular />
-          <Header.Content>You</Header.Content>
+          <Header.Content>Them</Header.Content>
         </Header>
       </Grid.Column>
       <Grid.Column width={9}>

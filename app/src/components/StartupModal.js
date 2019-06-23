@@ -3,7 +3,7 @@ import { useInput } from '../util/hooks';
 
 import { Modal, Input, Form, Button } from 'semantic-ui-react';
 
-import { useDispatch, useMappedState } from 'redux-react-hook';
+import { useDispatch, useSelector } from 'react-redux';
 import connectionActions from '../actions/connectionActions.js';
 
 const mapState = store => ({
@@ -14,7 +14,7 @@ export default function StartupModal () {
     const name = useInput();
     const nameInputRef = useRef();
     const dispatch = useDispatch();
-    const { signal } = useMappedState(mapState);
+    const { signal } = useSelector(mapState);
 
     useEffect(_ => nameInputRef.current.focus());
 
@@ -38,7 +38,8 @@ export default function StartupModal () {
                         <Input ref={nameInputRef} {...name} />
                     </Form.Field>
                     <Button 
-                    type='submit' 
+                    type='submit'
+                    disabled={!signal}
                     onClick={handleSubmitButton} 
                     color={name.value && signal ? 'blue' : 'grey'}>
                         Join room!

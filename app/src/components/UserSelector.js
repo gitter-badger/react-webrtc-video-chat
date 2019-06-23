@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useMappedState } from 'redux-react-hook';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Card, List } from 'semantic-ui-react';
 
@@ -14,7 +14,7 @@ const mapState = store => ({
 });
 
 export default function UserSelector({ disabled }) {
-    const { userId, to, isOpen, usersList } = useMappedState(mapState);
+    const { userId, to, isOpen, usersList } = useSelector(mapState);
     const dispatch = useDispatch();
 
     const handleItemClick = (e, data) => {

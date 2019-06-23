@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 
-import { StoreContext } from 'redux-react-hook';
+import { Provider as StoreProvider } from 'react-redux';
 import { createStore, combineReducers, compose, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import connectionReducer from './reducers/connectionReducer';
@@ -54,9 +54,9 @@ if (!navigator.mediaDevices.getUserMedia) {
 // -----
 
 ReactDOM.render(
-    <StoreContext.Provider value={appStore}>
+    <StoreProvider store={appStore}>
         <App />
-    </StoreContext.Provider>, 
+    </StoreProvider>, 
     document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Menu, Sticky } from 'semantic-ui-react';
 
-import { useDispatch, useMappedState } from 'redux-react-hook';
+import { useDispatch, useSelector } from 'react-redux';
 import uiActions from '../actions/uiActions';
 
 const mapState = store => ({
@@ -12,7 +12,7 @@ const mapState = store => ({
 
 export default function Navbar() {
     const dispatch = useDispatch();
-    const { isUserListOpen, isDebugDialogOpen } = useMappedState(mapState);
+    const { isUserListOpen, isDebugDialogOpen } = useSelector(mapState);
 
     return (
         <Sticky>
@@ -29,12 +29,12 @@ export default function Navbar() {
                     active={isUserListOpen}
                 />
     
-                <Menu.Item
+                {/* <Menu.Item
                     icon='bug'
                     position='right'
                     onClick={_ => dispatch(uiActions.TOGGLE_DEBUG_DIALOG())}
                     active={isDebugDialogOpen}
-                />
+                /> */}
             </Menu>
         </Sticky>
     );
